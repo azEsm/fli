@@ -24,4 +24,8 @@ public class SimpleTest {
         Assert.assertNotNull(clusterer);
         Assert.assertNotNull(restTemplate);
     }
+
+    public void testTest() throws Exception{
+        // to do something
+    }
 }
