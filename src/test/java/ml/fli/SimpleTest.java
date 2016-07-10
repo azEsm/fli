@@ -23,7 +23,7 @@ import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
-import java.io.InputStream;
+import java.io.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
@@ -41,10 +41,11 @@ public class SimpleTest {
         Assert.assertNotNull(restTemplate);
     }
 
+
     @Test
     public void tfIdfTest() throws Exception {
         try (
-                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv");
+                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
                 //InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")
         ) {
             //JSONLoader loader = new JSONLoader();
@@ -75,21 +76,27 @@ public class SimpleTest {
             }
         }
     }
+    @Test
     public void tfIdfJSONTest() throws Exception{
-        try(InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")){
+        try(InputStream json = this.getClass().getClassLoader().getResourceAsStream("person.json")){
+            JSONLoader loader = new JSONLoader();
+            loader.setSource(json);
+
 
         }
 
     }
-
+    @Test
     public void jsonToObjectTest() throws Exception {
         try (InputStream json = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
 
             ObjectMapper mapper = new ObjectMapper();
-            JSONLoader jsonLoader = new JSONLoader();
-            jsonLoader.setSource(json);
 
+//            JSONLoader jsonLoader = new JSONLoader();
+//            jsonLoader.setSource(json);
 
+            User user = (User) mapper.readValue(json, User.class);
+            System.out.print(user);
 
         }
     }
