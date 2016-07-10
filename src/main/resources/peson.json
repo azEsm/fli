@@ -1,0 +1,15 @@
+{
+  "response": {
+    "count": 2308981,
+    "items": [
+      {
+        "id": 30429836,
+        "first_name": "Женя",
+        "last_name": "Дубик",
+        "sex": 2,
+        "bdate": "18.11",
+        "home_town": "Gabberland"
+      }
+    ]
+  }
+}

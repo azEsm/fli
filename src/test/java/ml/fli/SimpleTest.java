@@ -1,5 +1,6 @@
 package ml.fli;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.ManhattanDistance;
 import weka.core.converters.CSVLoader;
+import weka.core.converters.JSONLoader;
 import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
@@ -41,32 +43,57 @@ public class SimpleTest {
 
     @Test
     public void tfIdfTest() throws Exception {
-        InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv");
+        try (
+                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv");
+                //InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")
+        ) {
+            //JSONLoader loader = new JSONLoader();
+            //loader.setSource(json);
 
-        Loader csvLoader = getCsvLoader(input);
+            Loader csvLoader = getCsvLoader(input);
 
-        Instances dataRaw = csvLoader.getDataSet();
-        logger.info("\n\nImported data: {}\n\n", dataRaw);
+            Instances dataRaw = csvLoader.getDataSet();
+            logger.info("\n\nImported data: {}\n\n", dataRaw);
 
-        StringToWordVector filter = getVectorizer();
-        filter.setInputFormat(dataRaw);
-        Instances dataFiltered = Filter.useFilter(dataRaw, filter);
-        logger.info("\n\nFiltered data:{}\n\n", dataFiltered);
+            StringToWordVector filter = getVectorizer();
+            filter.setInputFormat(dataRaw);
+            Instances dataFiltered = Filter.useFilter(dataRaw, filter);
+            logger.info("\n\nFiltered data:{}\n\n", dataFiltered);
 
-        SimpleKMeans clusterer = new SimpleKMeans();
-        clusterer.setNumClusters(3);
+            SimpleKMeans clusterer = new SimpleKMeans();
+            clusterer.setNumClusters(3);
 
-        //можно попробовать разные функции расстояния. По умолчанию используется евклидово
-        //clusterer.setDistanceFunction(new ManhattanDistance());
+            //можно попробовать разные функции расстояния. По умолчанию используется евклидово
+            //clusterer.setDistanceFunction(new ManhattanDistance());
 
-        clusterer.buildClusterer(dataFiltered);
+            clusterer.buildClusterer(dataFiltered);
 
-        System.out.println("\n\nNumber of clusters: " + clusterer.numberOfClusters());
-        for (Instance instance : dataFiltered) {
-            System.out.println(instance.toString());
-            System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+            System.out.println("\n\nNumber of clusters: " + clusterer.numberOfClusters());
+            for (Instance instance : dataFiltered) {
+                System.out.println(instance.toString());
+                System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+            }
         }
     }
+    public void tfIdfJSONTest() throws Exception{
+        try(InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")){
+
+        }
+
+    }
+
+    public void jsonToObjectTest() throws Exception {
+        try (InputStream json = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JSONLoader jsonLoader = new JSONLoader();
+            jsonLoader.setSource(json);
+
+
+
+        }
+    }
+
 
     private StringToWordVector getVectorizer() {
         StringToWordVector vectorizer = new StringToWordVector();
@@ -84,8 +111,10 @@ public class SimpleTest {
 
         return csvLoader;
     }
+    private Loader getJsonLoader(InputStream input) throws Exception{
+        JSONLoader jsonLoader = new JSONLoader();
+        jsonLoader.setSource(input);
 
-    public void testTest() throws Exception{
-        // to do something
+        return jsonLoader;
     }
 }
