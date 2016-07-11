@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by fab on 11.07.2016.
  */
 public class JsonConverter {
-
+    //commit
     public void run(){
         ObjectMapper mapper = new ObjectMapper();
         String filepath = System.getProperty("user.dir") +File.separator + "person.json";
