@@ -88,17 +88,10 @@ public class SimpleTest {
     }
     @Test
     public void jsonToObjectTest() throws Exception {
-        try (InputStream json = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
+        JsonConverter jsonConverter = new JsonConverter();
+        jsonConverter.run();
 
-            ObjectMapper mapper = new ObjectMapper();
 
-//            JSONLoader jsonLoader = new JSONLoader();
-//            jsonLoader.setSource(json);
-
-            User user = (User) mapper.readValue(json, User.class);
-            System.out.print(user);
-
-        }
     }
 
 

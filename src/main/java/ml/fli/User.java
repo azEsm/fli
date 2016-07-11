@@ -8,6 +8,9 @@ public class User {
     private String last_name;
     private int sex;
     private String home_town;
+    private String bdate;
+
+
 
     public User(){
     //конструктор без параметров
@@ -45,8 +48,13 @@ public class User {
         return home_town;
     }
 
+    public void setBdate(String bdate) {this.bdate = bdate;}
+
+    public String getBdate() {return bdate;}
+
     public String toString(){
         return "User [name = " + first_name + " " + last_name + "; sex =" + sex
-                + "; home_town = " + home_town + "]";
+                + "; home_town = " + home_town + "]"
+                + "bdate = " + bdate;
     }
 }
