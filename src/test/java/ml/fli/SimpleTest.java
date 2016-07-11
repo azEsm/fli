@@ -1,6 +1,8 @@
 package ml.fli;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ml.fli.models.Response;
+import ml.fli.models.User;
+import ml.fli.utils.JsonConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +15,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 import weka.clusterers.Clusterer;
 import weka.clusterers.SimpleKMeans;
-import weka.core.EuclideanDistance;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.ManhattanDistance;
 import weka.core.converters.CSVLoader;
 import weka.core.converters.JSONLoader;
 import weka.core.converters.Loader;
@@ -24,6 +24,9 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.*;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
@@ -37,8 +40,8 @@ public class SimpleTest {
     @Test
     public void dummyTest() throws Exception {
         Clusterer clusterer = new SimpleKMeans();
-        Assert.assertNotNull(clusterer);
-        Assert.assertNotNull(restTemplate);
+        assertNotNull(clusterer);
+        assertNotNull(restTemplate);
     }
 
 
@@ -78,20 +81,43 @@ public class SimpleTest {
     }
     @Test
     public void tfIdfJSONTest() throws Exception{
-        try(InputStream json = this.getClass().getClassLoader().getResourceAsStream("person.json")){
-            JSONLoader loader = new JSONLoader();
-            loader.setSource(json);
+        try(InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")){
+            Response response = JsonConverter.jsonToObject(sourceFile, Response.class);
+            assertNotNull(response);
+            assertNotNull(response.getResponse());
+            List<User> users = response.getResponse().getItems();
 
+            String json = JsonConverter.objectToJson(users);
 
+            System.out.println(json);
+
+            Loader loader = getJsonLoader(new ByteArrayInputStream(json.getBytes()));
+
+            Instances dataRaw = loader.getDataSet();
+            logger.info("\n\nImported data: {}\n\n", dataRaw);
         }
 
     }
     @Test
-    public void jsonToObjectTest() throws Exception {
-        JsonConverter jsonConverter = new JsonConverter();
-        jsonConverter.run();
+    public void jsonConverterTest() throws Exception {
+        try (InputStream usersStream = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
+            Response response = JsonConverter.jsonToObject(usersStream, Response.class);
+            assertNotNull(response);
+            assertNotNull(response.getResponse());
+            assertNotNull(response.getResponse().getItems());
+            assertEquals(1, response.getResponse().getItems().size());
+        }
 
+        Response response = JsonConverter.jsonToObject(getUsersJson(), Response.class);
+        assertNotNull(response);
+        assertNotNull(response.getResponse());
 
+        List<User> users = response.getResponse().getItems();
+        assertNotNull(users);
+        assertEquals(1, users.size());
+
+        String json = JsonConverter.objectToJson(response);
+        logger.info("Result:\n{}", json);
     }
 
 
@@ -116,5 +142,23 @@ public class SimpleTest {
         jsonLoader.setSource(input);
 
         return jsonLoader;
+    }
+
+    private String getUsersJson() {
+        return "{\n" +
+            "  \"response\": {\n" +
+            "    \"count\": 2308981,\n" +
+            "    \"items\": [\n" +
+            "      {\n" +
+            "        \"id\": 30429836,\n" +
+            "        \"first_name\": \"Женя\",\n" +
+            "        \"last_name\": \"Дубик\",\n" +
+            "        \"sex\": 2,\n" +
+            "        \"bdate\": \"18.11\",\n" +
+            "        \"home_town\": \"Gabberland\"\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  }\n" +
+            "}";
     }
 }
