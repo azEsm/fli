@@ -1,5 +1,8 @@
 package ml.fli;
 
+import ml.fli.controllers.UsersController;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
 import ml.fli.models.Response;
 import ml.fli.models.User;
 import ml.fli.utils.JsonConverter;
@@ -35,7 +38,10 @@ public class SimpleTest {
     final static Logger logger = LoggerFactory.getLogger(SimpleTest.class);
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private UsersController usersController;
 
     @Test
     public void dummyTest() throws Exception {
@@ -120,6 +126,14 @@ public class SimpleTest {
         logger.info("Result:\n{}", json);
     }
 
+    @Test
+    public void testUsersController() {
+        FrontendRequest request = new FrontendRequest();
+        request.setUserId("123");
+        request.setSex("1");
+        FrontendResponse users = usersController.findUsers(request);
+        assertNotNull(users);
+    }
 
     private StringToWordVector getVectorizer() {
         StringToWordVector vectorizer = new StringToWordVector();
