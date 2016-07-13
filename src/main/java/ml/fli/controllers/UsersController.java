@@ -3,6 +3,7 @@ package ml.fli.controllers;
 import com.wordnik.swagger.annotations.ApiOperation;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
+import ml.fli.models.User;
 import ml.fli.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,5 +25,17 @@ public class UsersController {
     @RequestMapping(value = "/get", method = {GET, POST})
     public FrontendResponse findUsers(@RequestBody FrontendRequest request) {
         return usersService.get(request);
+    }
+
+    @ApiOperation("Проверка доступности контроллера")
+    @RequestMapping(value = "/test", method = {GET, POST})
+    public User test() {
+        User user = new User();
+        user.setSex("1");
+        user.setBdate("bDate");
+        user.setFirst_name("Вася");
+        user.setLast_name("Пупкин");
+
+        return user;
     }
 }
