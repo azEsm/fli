@@ -1,11 +1,10 @@
 package ml.fli;
 
+import ml.fli.models.*;
+import ml.fli.utils.VkApi;
 import ml.fli.controllers.UsersController;
-import ml.fli.models.FrontendRequest;
-import ml.fli.models.FrontendResponse;
-import ml.fli.models.Response;
-import ml.fli.models.User;
 import ml.fli.utils.JsonConverter;
+import ml.fli.utils.VkApi;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,6 +102,21 @@ public class SimpleTest {
             logger.info("\n\nImported data: {}\n\n", dataRaw);
         }
 
+    }
+    @Test
+    public void vkApiTest() throws Exception {
+        VkApi vkApi = new VkApi();
+        String resultOneUser = vkApi.getUser(132154659);
+        logger.info("ResultOneUser:\n{}", resultOneUser);
+        String resultGroup = vkApi.getUserGroups(132154659,10);
+        logger.info("ResultGroup:\n{}", resultGroup);
+        String resultAudio = vkApi.getUserAudios(132154659,10);
+        logger.info("ResultAudio:\n{}", resultAudio);
+
+        VkApiParams param = VkApiParams.create();
+        param.add("city", "1").add("sex", "1").add("age", "25");
+        String resultUserList = vkApi.getUsersList(param);
+        logger.info("ResultUserList:\n{}", resultUserList);
     }
     @Test
     public void jsonConverterTest() throws Exception {
