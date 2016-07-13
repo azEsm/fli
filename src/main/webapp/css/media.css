@@ -1,0 +1,23 @@
+@media (max-width: 1710px) {
+	.search-result {
+		width: 1360px;
+	}
+}
+
+@media (max-width: 1370px) {
+	.search-result {
+		width: 1020px;
+	}
+}
+
+@media (max-width: 1030px) {
+	.search-result {
+		width: 680px;
+	}
+}
+
+@media (max-width: 690px) {
+	.search-result {
+		width: 340px;
+	}
+}

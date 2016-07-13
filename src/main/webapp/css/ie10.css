@@ -1,0 +1,18 @@
+.search-result,
+.statistics__item,
+.statistics,
+.search,
+.content,
+.header,
+body {
+	-ms-display: flex;
+}
+
+body,
+.content {
+	-ms-flex-direction: column;
+}
+
+.search-result {
+	-ms-flex-wrap: wrap;
+}

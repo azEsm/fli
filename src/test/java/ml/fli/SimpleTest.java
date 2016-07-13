@@ -23,5 +23,6 @@ public class SimpleTest {
         Clusterer clusterer = new SimpleKMeans();
         Assert.assertNotNull(clusterer);
         Assert.assertNotNull(restTemplate);
+
     }
 }
