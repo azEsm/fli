@@ -1,0 +1,292 @@
+* {
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+
+html,
+body {
+	min-height: 100vh;
+	height: 100vh;
+}
+
+body {
+	display: flex;
+	flex-direction:column;
+	font-family: "muller";
+	font-size: 18px;
+	color: #fff;
+	background: url(../images/bg-pattern.png);
+}
+
+input:focus,
+button:focus {
+	outline: none;
+	box-shadow: inset 0 0 15px rgba(255, 255, 255, .7);
+}
+
+::-webkit-input-placeholder {color: #fff;}
+::-moz-placeholder          {color: #fff;}/* Firefox 19+ */
+:-moz-placeholder           {color: #fff;}/* Firefox 18- */
+:-ms-input-placeholder      {color: #fff;}
+
+/* header */
+
+.header {
+	min-height: 135px;
+	display: flex;
+	margin: 20px auto 0;
+}
+
+.logo {
+	display: inline-block;
+	height: 135px;
+	margin: auto 0 auto auto;
+}
+
+.slogan {
+	margin: auto auto auto 20px;
+	color: #e63946;
+	text-transform: uppercase;
+	font-size: 32px;
+	font-weight: normal;
+}
+
+/* /header */
+
+/* content */
+
+/* act 1 */
+
+.content {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.block-info {
+	padding: 10px;
+	border-radius: 5px;
+	background: #83c9f4;
+	position: relative;
+}
+
+.block-info:before {
+	content: "";
+	display: block;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 15px 0 0 15px;
+	border-color: transparent transparent transparent #83c9f4;
+	position: absolute;
+	top: -15px;
+	left: 35px;
+}
+
+.block-info_massege {
+	width: 330px;
+	margin: 20px auto 0;
+}
+
+.block-info_warning {
+	background: #e63946;
+}
+
+.block-info_warning:before {
+	border-color: transparent transparent transparent #e63946;
+}
+
+/* search */
+
+.search {
+	display: flex;
+	margin: auto;
+}
+
+.search__input,
+.search__button {
+	height: 60px;
+}
+
+.search__input {
+	width: 350px;
+	padding: 0 20px;
+	color: #fff;
+	font-size: 18px;
+	font-style: italic;
+	border-radius: 5px;
+	box-shadow: 0 0 30px rgba(142, 193, 235, .7);
+	background: #83c9f4;
+}
+
+.button {
+	line-height: 60px;
+	height: 60px;
+	cursor: pointer;
+	padding: 0 15px;
+	border-radius: 5px;
+	font-weight: bold;
+	font-size: 18px;
+	text-transform: uppercase;
+	color: #fff;
+}
+
+.search__button {
+	margin-left: 20px;
+	box-shadow: 0 0 30px rgba(230, 57, 70, .7);
+	background: #e63946;
+
+	transform: scale(1);
+	transition: transform .4s, box-shadow .4s;
+}
+
+.search__button:hover {
+	box-shadow: 0 0 50px rgba(230, 57, 70, .7);
+	transform: scale(1.1);
+}
+
+.search__button:after {
+	content: "";
+	display: block;
+	float: right;
+	width: 32px;
+	height: 32px;
+	margin: 12px 10px;
+	background: url(../images/smill.svg);
+}
+
+.filter {
+	margin-top: 35px;
+	width: 370px;
+}
+
+.filter__title {
+	font-size: 22px;
+}
+
+/* /search */
+
+
+/* statistics */
+
+.statistics {
+	margin: 0 auto 50px auto;
+	display: flex;
+	list-style: none;
+	color: #83c9f4;
+}
+
+.statistics__item {
+	display: flex;
+	margin-right: 50px;
+}
+
+.statistics__info {
+	padding: 27px 25px;
+	text-align: right;
+	font-weight: normal;
+}
+
+.statistics__number {
+	font-size: 100px;
+	opacity: .9;
+}
+
+/* /statistics */
+
+/* /act 1 */
+
+/* act 2 */
+
+.get-result {
+	margin: auto;
+}
+
+.get-result__button {
+	background: #e63946;
+	box-shadow: 0 0 30px rgba(230, 57, 70, .7);
+	transform: scale(1);
+	transition: transform .4s, box-shadow .4s;
+}
+
+.get-result__button:hover {
+	transform: scale(1.2);
+	box-shadow: 0 0 50px rgba(230, 57, 70, .7);
+}
+
+.game {
+	width: 800px;
+	height: 600px;
+	margin: 0 auto;
+	background: #83c9f4;
+}
+
+/* /act 2 */
+
+/* act 3 */
+
+.search-result {
+	display: flex;
+	flex-wrap: wrap;
+	width: 1700px;
+	margin: 0 auto;
+}
+
+.user {
+	width: 300px;
+	height: 300px;
+	margin: 20px;
+	position: relative;
+	overflow: hidden;
+	border-radius: 3px;
+}
+
+.user__inner-ava {
+	position: absolute;
+	z-index: 1;
+}
+
+.user__desc {
+	width: 100%;
+	height: 100%;
+	bottom: 0;
+	left: 0;
+	position: absolute;
+	z-index: 2;
+	color: #fff;
+	background: rgba(131, 201, 244, 0);
+	transition: background .7s;
+}
+
+.user__title {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding: 15px;
+	background: rgba(131, 201, 244, .7);
+	transition: font-size .7s;
+}
+
+.user__massege {
+	width: 100%;
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	font-size: 22px;
+	text-align: center;
+	font-style: italic;
+	transition: opacity .7s;
+}
+
+.user__desc:hover { background: rgba(131, 201, 244, .7); }
+.user__desc:hover .user__massege { opacity: 1; }
+.user__desc:hover .user__title {
+	font-size: 32px;
+}
+
+/* /act 3 */
+
+/* /content */
