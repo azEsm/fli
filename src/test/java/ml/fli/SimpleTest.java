@@ -118,6 +118,7 @@ public class SimpleTest {
         String resultUserList = vkApi.getUsersList(param);
         logger.info("ResultUserList:\n{}", resultUserList);
     }
+
     @Test
     public void jsonConverterTest() throws Exception {
         try (InputStream usersStream = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
