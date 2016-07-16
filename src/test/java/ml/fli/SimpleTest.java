@@ -127,6 +127,7 @@ public class SimpleTest {
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
     }
+
     @Test
     public void jsonConverterTest() throws Exception {
         try (InputStream usersStream = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
