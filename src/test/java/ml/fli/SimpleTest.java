@@ -1,6 +1,8 @@
 package ml.fli;
 
+import com.google.gson.*;
 import ml.fli.models.*;
+import ml.fli.utils.JSONParser;
 import ml.fli.utils.VkApi;
 import ml.fli.controllers.UsersController;
 import ml.fli.utils.JsonConverter;
@@ -26,6 +28,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -106,17 +109,23 @@ public class SimpleTest {
     @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
-        String resultOneUser = vkApi.getUser(132154659);
-        logger.info("ResultOneUser:\n{}", resultOneUser);
+
+        String resultOneUser = vkApi.getUser("132154659");
+        JSONParser parser = new JSONParser();
+        User oneUser = parser.parseUser(resultOneUser);
+        logger.info("\nResultUser:\n{}", oneUser.getId());
+
         String resultGroup = vkApi.getUserGroups(132154659,10);
-        logger.info("ResultGroup:\n{}", resultGroup);
+        logger.info("\nResultGroup:\n{}", resultGroup);
         String resultAudio = vkApi.getUserAudios(132154659,10);
-        logger.info("ResultAudio:\n{}", resultAudio);
+        logger.info("\nResultAudio:\n{}", resultAudio);
 
         VkApiParams param = VkApiParams.create();
         param.add("city", "1").add("sex", "1").add("age", "25");
         String resultUserList = vkApi.getUsersList(param);
-        logger.info("ResultUserList:\n{}", resultUserList);
+        ArrayList<User> listUsers = parser.parseUsers(resultUserList);
+        logger.info("\nResult:\n{}", listUsers.size());
+        logger.info("\nResultUserList:\n{}", resultUserList);
     }
     @Test
     public void jsonConverterTest() throws Exception {

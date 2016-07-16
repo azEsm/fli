@@ -1,6 +1,11 @@
 package ml.fli.models;
 
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class User {
     private String id;
 
@@ -10,9 +15,11 @@ public class User {
 
     private String sex;
 
-    private String home_town;
+    private String city;
 
     private String bdate;
+
+    private String photo_400_orig;
 
     public String getId() {
         return id;
@@ -46,12 +53,12 @@ public class User {
         this.sex = sex;
     }
 
-    public String getHome_town() {
-        return home_town;
+    public String getCity() {
+        return city;
     }
 
-    public void setHome_town(String home_town) {
-        this.home_town = home_town;
+    public void setCity(String home_town) {
+        this.city = city;
     }
 
     public String getBdate() {
@@ -62,9 +69,31 @@ public class User {
         this.bdate = bdate;
     }
 
-    public String toString() {
-        return "User [name = " + first_name + " " + last_name + "; sex =" + sex
-            + "; home_town = " + home_town + "]"
-            + "bdate = " + bdate;
+    public String getPhoto_400_orig() {
+        return photo_400_orig;
     }
+
+    public void setPhoto_400_orig(String photo_400_orig) {
+        this.photo_400_orig = photo_400_orig;
+    }
+
+    /*    public String toString() {
+        return "User [name = " + first_name + " " + last_name + "; sex =" + sex
+            + "; home_town = " + city + "]"
+            + "bdate = " + bdate;
+    }*/
+
+    public User() {
+
+    }
+
+    public User(String id, String first_name, String last_name, String sex, String bdate, String city) {
+        this.id = id;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.sex = sex;
+        this.bdate = bdate;
+        this.city = city;
+    }
+
 }

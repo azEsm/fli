@@ -1,6 +1,11 @@
 package ml.fli.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import ml.fli.models.VkApiParams;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class VkApi {
@@ -21,15 +27,15 @@ public final class VkApi {
             + "?{PARAMETERS}"
             + "&access_token=" + accessToken
             + "&v=" + API_VERSION;
-
-    public String getUser(int userId) throws IOException {
+    //Заполнение параметров для получения пользователя по id
+    public String getUser(String userId) throws IOException {
         return invokeApi("users.get", Params.create()
-                .add("user_id", String.valueOf(userId))
+                .add("user_id", userId)
                 .add("fields", "sex,bdate,city"));
     }
-
+    //Заполнение параметров для получения списка пользователя по заданным значениям
     public String getUsersList(VkApiParams param) throws IOException {
-        Params parameter = Params.create().add("count","1000");
+        Params parameter = Params.create().add("count","10");
         String value = param.getItem("city");
         if (value != "") {
             parameter.add("city", value);
@@ -46,13 +52,13 @@ public final class VkApi {
         parameter.add("fields", "sex,bdate,city,photo_400_orig");
         return invokeApi("users.search", parameter);
     }
-
+    //Заполнение параметров для получения списка аудиозаписей пользователя по id
     public String getUserAudios(int userId, int count) throws IOException {
         return invokeApi("audio.get", Params.create()
                 .add("count", String.valueOf(count))
                 .add("owner_id", String.valueOf(userId)));
     }
-
+    //Заполнение параметров для получения списка групп пользователя по id
     public String getUserGroups(int userId, int count) throws IOException {
         return invokeApi("groups.get", Params.create()
                 .add("count", String.valueOf(count))
@@ -67,7 +73,7 @@ public final class VkApi {
         return invokeApi(reqUrl);
     }
 
-    private static String invokeApi(String requestUrl) throws IOException {
+/*    private static String invokeApi(String requestUrl) throws IOException {
         final StringBuilder result = new StringBuilder();
         final URL url = new URL(requestUrl);
         try (InputStream is = url.openStream()) {
@@ -75,6 +81,12 @@ public final class VkApi {
             reader.lines().forEach(result::append);
         }
         return result.toString();
+    }*/
+
+    private static String invokeApi(String requestUrl) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(requestUrl,String.class);
+        return result;
     }
 
     private static class Params {
@@ -93,7 +105,7 @@ public final class VkApi {
             params.put(key, value);
             return this;
         }
-
+        //Конструирование строки запроса
         public String build() {
             if (params.isEmpty()) return "";
             final StringBuilder result = new StringBuilder();
