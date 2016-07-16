@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import ml.fli.models.*;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.VkApi;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -38,13 +37,9 @@ public class TransferController {
                 Calendar calendar = Calendar.getInstance();
 
                 int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(6));
-                param.add("age", String.valueOf(age));
             }
+
         }
-        param.add("sex", choiceSex);
-
-        String resultListUsers = vkApi.getUsersList(param);
-
 
 
         return new FrontendResponse();
