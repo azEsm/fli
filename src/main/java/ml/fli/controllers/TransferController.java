@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -21,25 +22,28 @@ public class TransferController {
         String userId = message.getUserId();
         String choiceSex = message.getSex();
 
-        VkApi vkApi = new VkApi();
-        String resultOneUser = vkApi.getUser(userId);
-
-        JSONParser parser = new JSONParser();
-        User oneUser = parser.parseUser(resultOneUser);
-
-        VkApiParams param = VkApiParams.create();
-        if (oneUser.getCity() instanceof String) {
-            param.add("city", oneUser.getCity());
-        }
-        if (oneUser.getBdate() instanceof String) {
-            String year = oneUser.getBdate();
-            if (year.length() > 4) {
-                Calendar calendar = Calendar.getInstance();
-
-                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(6));
-            }
-
-        }
+//        /*VkApi vkApi = new VkApi();
+//        String resultOneUser = vkApi.getUser(userId);
+//
+//        JSONParser parser = new JSONParser();
+//        User oneUser = parser.parseUser(resultOneUser);
+//
+//        VkApiParams param = VkApiParams.create();
+//        if (oneUser.getCity() instanceof String) {
+//            param.add("city", oneUser.getCity());
+//        }
+//        if (oneUser.getBdate() instanceof String) {
+//            String year = oneUser.getBdate();
+//            if (year.length() > 5) {
+//                Calendar calendar = Calendar.getInstance();
+//                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(5));
+//                param.add("age", String.valueOf(age));
+//            }
+//        }
+//        param.add("sex", choiceSex);
+//
+//        String resultListUser = vkApi.getUsersList(param);
+//        ArrayList<User> usersList = parser.parseUsers(resultListUser);*/
 
 
         return new FrontendResponse();

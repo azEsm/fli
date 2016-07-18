@@ -1,20 +1,17 @@
 package ml.fli.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FrontendResponse {
 
-    private List<FrontendResponseOneUser> listUser;
+    private ArrayList<FrontendResponseOneUser> listUser;
 
-    public FrontendResponse(List<FrontendResponseOneUser> listUser) {
+    public FrontendResponse(ArrayList<FrontendResponseOneUser> listUser) {
         this.listUser = listUser;
     }
 
     public FrontendResponse() {
 
-    }
-
-    public void add(FrontendResponseOneUser oneUser) {
-        listUser.add(oneUser);
     }
 }

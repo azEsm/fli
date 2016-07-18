@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
@@ -29,6 +30,7 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -110,18 +112,32 @@ public class SimpleTest {
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
 
-        String resultOneUser = vkApi.getUser("132154659");
+        String resultOneUser = vkApi.getUser("5592362");
         JSONParser parser = new JSONParser();
         User oneUser = parser.parseUser(resultOneUser);
-        logger.info("\nResultUser:\n{}", oneUser.getId());
+        logger.info("\nResultUser:\n{}", oneUser.getId() + " " + oneUser.getFirst_name() + " "
+                + oneUser.getLast_name() + " " + oneUser.getSex() + " " + oneUser.getBdate());
 
         String resultGroup = vkApi.getUserGroups(132154659,10);
         logger.info("\nResultGroup:\n{}", resultGroup);
         String resultAudio = vkApi.getUserAudios(132154659,10);
         logger.info("\nResultAudio:\n{}", resultAudio);
 
+        String choiceSex = "1";
         VkApiParams param = VkApiParams.create();
-        param.add("city", "1").add("sex", "1").add("age", "25");
+        if (oneUser.getCity() instanceof String) {
+            param.add("city", oneUser.getCity());
+        }
+        if (oneUser.getBdate() instanceof String) {
+            String year = oneUser.getBdate();
+            if (year.length() > 5) {
+                Calendar calendar = Calendar.getInstance();
+
+                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(5));
+                param.add("age", String.valueOf(age));
+            }
+        }
+        param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
         ArrayList<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
