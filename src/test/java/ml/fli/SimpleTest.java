@@ -6,8 +6,8 @@ import ml.fli.utils.JSONParser;
 import ml.fli.utils.VkApi;
 import ml.fli.controllers.UsersController;
 import ml.fli.utils.JsonConverter;
-import ml.fli.utils.VkApi;
 import org.junit.Assert;
+import ml.fli.utils.UsersConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,9 +29,11 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -58,8 +60,7 @@ public class SimpleTest {
     @Test
     public void tfIdfTest() throws Exception {
         try (
-                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
-                //InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")
+            InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
         ) {
             //JSONLoader loader = new JSONLoader();
             //loader.setSource(json);
@@ -89,9 +90,10 @@ public class SimpleTest {
             }
         }
     }
+
     @Test
-    public void tfIdfJSONTest() throws Exception{
-        try(InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")){
+    public void tfIdfJSONTest() throws Exception {
+        try (InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
             Response response = JsonConverter.jsonToObject(sourceFile, Response.class);
             assertNotNull(response);
             assertNotNull(response.getResponse());
@@ -144,6 +146,7 @@ public class SimpleTest {
         logger.info("\nResultUserList:\n{}", resultUserList);
     }
 
+
     @Test
     public void jsonConverterTest() throws Exception {
         try (InputStream usersStream = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
@@ -175,6 +178,28 @@ public class SimpleTest {
         assertNotNull(users);
     }
 
+    @Test
+    public void usersLoaderTest() throws Exception {
+        Set<User> users = buildUsers();
+        Instances instances = UsersConverter.usersToInstances(users);
+        assertNotNull(instances);
+        assertEquals(users.size(), instances.size());
+    }
+
+    private Set<User> buildUsers() {
+        User user = new User();
+        user.setId("123");
+        user.setFirst_name("Иван");
+        user.setLast_name("Петров");
+        user.setCity("456");
+        user.setSex("3");
+        user.setBdate("2016");
+        Set<User> result = new HashSet<>();
+        result.add(user);
+
+        return result;
+    }
+
     private StringToWordVector getVectorizer() {
         StringToWordVector vectorizer = new StringToWordVector();
         vectorizer.setIDFTransform(true);
@@ -182,7 +207,7 @@ public class SimpleTest {
         return vectorizer;
     }
 
-    private Loader getCsvLoader(InputStream input) throws Exception{
+    private Loader getCsvLoader(InputStream input) throws Exception {
         CSVLoader csvLoader = new CSVLoader();
         csvLoader.setSource(input);
         String[] options = new String[1];
@@ -191,7 +216,8 @@ public class SimpleTest {
 
         return csvLoader;
     }
-    private Loader getJsonLoader(InputStream input) throws Exception{
+
+    private Loader getJsonLoader(InputStream input) throws Exception {
         JSONLoader jsonLoader = new JSONLoader();
         jsonLoader.setSource(input);
 
