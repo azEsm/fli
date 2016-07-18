@@ -87,6 +87,7 @@ public class SimpleTest {
             }
         }
     }
+
     @Test
     public void tfIdfJSONTest() throws Exception{
         try(InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")){
@@ -106,6 +107,7 @@ public class SimpleTest {
         }
 
     }
+
     @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
@@ -126,6 +128,11 @@ public class SimpleTest {
         ArrayList<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
+    }
+
+    @Test
+    public void transferControllerTest() throws Exception {
+
     }
 
     @Test
