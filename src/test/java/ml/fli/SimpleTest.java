@@ -1,13 +1,14 @@
 package ml.fli;
 
-import com.google.gson.*;
-import ml.fli.models.*;
-import ml.fli.utils.JSONParser;
-import ml.fli.utils.VkApi;
 import ml.fli.controllers.UsersController;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
+import ml.fli.models.Response;
+import ml.fli.models.User;
 import ml.fli.utils.JsonConverter;
 import ml.fli.utils.VkApi;
 import org.junit.Assert;
+import ml.fli.utils.UsersConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,7 +30,9 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -87,7 +90,6 @@ public class SimpleTest {
             }
         }
     }
-
     @Test
     public void tfIdfJSONTest() throws Exception{
         try(InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")){
@@ -134,6 +136,7 @@ public class SimpleTest {
     public void transferControllerTest() throws Exception {
 
     }
+
 
     @Test
     public void jsonConverterTest() throws Exception {
