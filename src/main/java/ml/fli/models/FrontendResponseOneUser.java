@@ -8,7 +8,7 @@ public class FrontendResponseOneUser {
 
     private String userPic;
 
-    private int weight;
+    private String weight;
 
     public String getUserUrl() {
         return userUrl;
@@ -22,15 +22,35 @@ public class FrontendResponseOneUser {
         return userPic;
     }
 
-    public int getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public FrontendResponseOneUser(String userUrl, String userName, String userPic, int weight) {
+    public void setUserUrl(String userUrl) {
+        this.userUrl = userUrl;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserPic(String userPic) {
+        this.userPic = userPic;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public FrontendResponseOneUser(String userUrl, String userName, String userPic, String weight) {
         this.userUrl = userUrl;
         this.userName = userName;
         this.userPic = userPic;
         this.weight = weight;
+    }
+
+    public FrontendResponseOneUser() {
+
     }
 
 }

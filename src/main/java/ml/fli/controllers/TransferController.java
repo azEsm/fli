@@ -22,11 +22,11 @@ public class TransferController {
         String userId = message.getUserId();
         String choiceSex = message.getSex();
 
-//        /*VkApi vkApi = new VkApi();
-//        String resultOneUser = vkApi.getUser(userId);
-//
-//        JSONParser parser = new JSONParser();
-//        User oneUser = parser.parseUser(resultOneUser);
+        VkApi vkApi = new VkApi();
+        String resultOneUser = vkApi.getUser(userId);
+
+        JSONParser parser = new JSONParser();
+        User oneUser = parser.parseUser(resultOneUser);
 //
 //        VkApiParams param = VkApiParams.create();
 //        if (oneUser.getCity() instanceof String) {
@@ -36,17 +36,21 @@ public class TransferController {
 //            String year = oneUser.getBdate();
 //            if (year.length() > 5) {
 //                Calendar calendar = Calendar.getInstance();
+//
 //                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(5));
-//                param.add("age", String.valueOf(age));
 //            }
 //        }
-//        param.add("sex", choiceSex);
-//
-//        String resultListUser = vkApi.getUsersList(param);
-//        ArrayList<User> usersList = parser.parseUsers(resultListUser);*/
 
+        String userUrl = "vk.com/id" + userId;
+        String userName = oneUser.getFirst_name() + " " + oneUser.getLast_name();
+        String userPic = "https://pp.vk.me/c633221/v633221362/39410/MT0d_XiMpqs.jpg";
+        int userWeight = 10;
 
-        return new FrontendResponse();
+        FrontendResponseOneUser result = new FrontendResponseOneUser(userUrl, userName, userPic, userWeight);
+        ArrayList<FrontendResponseOneUser> userList = new ArrayList<>();
+        userList.add(result);
+
+        return new FrontendResponse(userList);
     }
 
 }

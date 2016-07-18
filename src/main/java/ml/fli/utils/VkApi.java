@@ -73,7 +73,7 @@ public final class VkApi {
         return invokeApi(reqUrl);
     }
 
-/*    private static String invokeApi(String requestUrl) throws IOException {
+    private static String invokeApi(String requestUrl) throws IOException {
         final StringBuilder result = new StringBuilder();
         final URL url = new URL(requestUrl);
         try (InputStream is = url.openStream()) {
@@ -81,13 +81,13 @@ public final class VkApi {
             reader.lines().forEach(result::append);
         }
         return result.toString();
-    }*/
+    }
 
-    private static String invokeApi(String requestUrl) throws IOException {
+/*    private static String invokeApi(String requestUrl) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(requestUrl,String.class);
         return result;
-    }
+    }*/
 
     private static class Params {
 
