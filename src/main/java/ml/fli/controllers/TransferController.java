@@ -17,11 +17,12 @@ public class TransferController {
 
     @MessageMapping("/get")
     @SendTo("/data/userList")
-    public FrontendResponse get(FrontendRequest message) throws Exception {
-        Thread.sleep(30000);
-        String userId = message.getUserId();
-        String choiceSex = message.getSex();
+    public FrontendResponse get() throws Exception {
+        //Thread.sleep(30000);
+        //String userId = message.getUserId();
+        //String choiceSex = message.getSex();
 
+        String userId = "132154659";
         VkApi vkApi = new VkApi();
         String resultOneUser = vkApi.getUser(userId);
 
