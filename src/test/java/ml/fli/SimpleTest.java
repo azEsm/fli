@@ -1,25 +1,24 @@
 package ml.fli;
 
-import com.google.gson.*;
-import ml.fli.models.*;
-import ml.fli.utils.JSONParser;
-import ml.fli.utils.VkApi;
 import ml.fli.controllers.UsersController;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
+import ml.fli.models.Response;
+import ml.fli.models.User;
+import ml.fli.models.VkApiParams;
+import ml.fli.utils.JSONParser;
 import ml.fli.utils.JsonConverter;
-import org.junit.Assert;
 import ml.fli.utils.UsersConverter;
+import ml.fli.utils.VkApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
-import weka.classifiers.Evaluation;
-import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
@@ -31,14 +30,16 @@ import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
-import java.io.*;
-import java.util.HashSet;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
@@ -96,6 +97,44 @@ public class SimpleTest {
 
     @Test
     public void usersClassificationTest() throws Exception {
+        Set<User> users = buildSomeUsers();
+
+        Instances rowData = UsersConverter.usersToInstances(users);
+        logger.info("\n\nImported data: \n{}\n\n", rowData);
+
+        EM clusterer = buildEMClusterer();
+
+        StringToWordVector filter = getVectorizer();
+        filter.setInputFormat(rowData);
+        Instances dataFiltered = Filter.useFilter(rowData, filter);
+        logger.info("\n\nFiltered data: \n{}\n\n", dataFiltered);
+
+        clusterer.buildClusterer(dataFiltered);
+
+        System.out.println("\n\nNumber of clusters: " + clusterer.numberOfClusters());
+        for (Instance instance : dataFiltered) {
+            System.out.println(instance.toString());
+            System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+        }
+
+//        ClusterEvaluation evaluation = new ClusterEvaluation();
+//        evaluation.setClusterer(clusterer);
+//        evaluation.evaluateClusterer();
+    }
+
+    private EM buildEMClusterer() throws Exception {
+        EM clusterer = new EM();
+        clusterer.setNumClusters(4);
+
+        String[] options = new String[2];
+        options[0] = "-I";// max. iterations
+        options[1] = "100";
+
+        clusterer.setOptions(options);
+        return clusterer;
+    }
+
+    private Set<User> buildSomeUsers() {
         Set<User> users = new HashSet<>();
 
         User user1 = new User();
@@ -113,25 +152,25 @@ public class SimpleTest {
         user2.setSex("2");
 
         User user3 = new User();
-        user2.setBdate("21.3.1981");
-        user2.setCity("Penza");
-        user2.setFirst_name("Asadgdsd");
-        user2.setLast_name("Posggdset");
-        user2.setSex("2");
+        user3.setBdate("21.03.1981");
+        user3.setCity("Penza");
+        user3.setFirst_name("Asadgdsd");
+        user3.setLast_name("Posggdset");
+        user3.setSex("2");
 
         User user4 = new User();
-        user2.setBdate("2.2.1918");
-        user2.setCity("Penza");
-        user2.setFirst_name("Asssfad");
-        user2.setLast_name("Pogfdsget");
-        user2.setSex("1");
+        user4.setBdate("02.02.1918");
+        user4.setCity("Penza");
+        user4.setFirst_name("Asssfad");
+        user4.setLast_name("Pogfdsget");
+        user4.setSex("1");
 
         User user5 = new User();
-        user2.setBdate("12.5.1928");
-        user2.setCity("Penza");
-        user2.setFirst_name("Awerwesad");
-        user2.setLast_name("Posgeetdgdt");
-        user2.setSex("1");
+        user5.setBdate("12.05.1928");
+        user5.setCity("Penza");
+        user5.setFirst_name("Awerwesad");
+        user5.setLast_name("Posgeetdgdt");
+        user5.setSex("1");
 
         users.add(user1);
         users.add(user2);
@@ -139,34 +178,7 @@ public class SimpleTest {
         users.add(user4);
         users.add(user5);
 
-        Instances rowData = UsersConverter.usersToInstances(users);
-        logger.info("\n\nImported data: {}\n\n", rowData);
-
-        EM clusterer = new EM();
-        clusterer.setNumClusters(4);
-
-        String[] options = new String[2];
-        options[0] = "-I";// max. iterations
-        options[1] = "100";
-
-        clusterer.setOptions(options);
-
-        StringToWordVector filter = getVectorizer();
-        filter.setInputFormat(rowData);
-        Instances dataFiltered = Filter.useFilter(rowData, filter);
-        logger.info("\n\nFiltered data:{}\n\n", dataFiltered);
-
-        clusterer.buildClusterer(dataFiltered);
-
-        System.out.println("\n\nNumber of clusters: " + clusterer.numberOfClusters());
-        for (Instance instance : dataFiltered) {
-            System.out.println(instance.toString());
-            System.out.println("Cluster: " + clusterer.clusterInstance(instance));
-        }
-
-//        ClusterEvaluation evaluation = new ClusterEvaluation();
-//        evaluation.setClusterer(clusterer);
-//        evaluation.evaluateClusterer();
+        return users;
     }
 
     @Test

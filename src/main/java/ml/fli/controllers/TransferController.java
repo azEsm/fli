@@ -1,7 +1,9 @@
 package ml.fli.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import ml.fli.models.*;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
+import ml.fli.models.FrontendResponseOneUser;
+import ml.fli.models.User;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.VkApi;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -9,8 +11,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 @Controller
 public class TransferController {
@@ -46,7 +46,7 @@ public class TransferController {
         String userPic = "https://pp.vk.me/c633221/v633221362/39410/MT0d_XiMpqs.jpg";
         int userWeight = 10;
 
-        FrontendResponseOneUser result = new FrontendResponseOneUser(userUrl, userName, userPic, userWeight);
+        FrontendResponseOneUser result = new FrontendResponseOneUser(userUrl, userName, userPic, String.valueOf(userWeight));
         ArrayList<FrontendResponseOneUser> userList = new ArrayList<>();
         userList.add(result);
 
