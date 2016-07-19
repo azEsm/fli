@@ -1,6 +1,7 @@
 package ml.fli.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import com.google.common.base.Strings;
 import ml.fli.models.User;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
@@ -43,7 +44,6 @@ public class UsersConverter {
         try (PrintWriter writer = new PrintWriter(file, CHARSET);) {
             writer.println("@Relation Users");
             writer.println("");
-            writer.println("@attribute id string");
             writer.println("@attribute first_name string");
             writer.println("@attribute last_name string");
             writer.println("@attribute sex string");
@@ -62,12 +62,12 @@ public class UsersConverter {
             String[] entries = new String[6];
 
             for (User user : users) {
-                entries[0] = user.getId();
-                entries[1] = user.getFirst_name();
-                entries[2] = user.getLast_name();
-                entries[3] = user.getSex();
-                entries[4] = user.getCity();
-                entries[5] = user.getBdate();
+//                entries[0] = Strings.isNullOrEmpty(user.getId()) ? " " : user.getId();
+                entries[0] = Strings.isNullOrEmpty(user.getFirst_name()) ? " " : user.getFirst_name();
+                entries[1] = Strings.isNullOrEmpty(user.getLast_name()) ? " " : user.getLast_name();
+                entries[2] = Strings.isNullOrEmpty(user.getSex()) ? " " : user.getSex();
+                entries[3] = Strings.isNullOrEmpty(user.getCity()) ? " " : user.getCity();
+                entries[4] = Strings.isNullOrEmpty(user.getBdate()) ? " " : user.getBdate();
                 csvWriter.writeNext(entries);
             }
         } catch (Exception e) {
