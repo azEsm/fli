@@ -104,7 +104,7 @@ public class SimpleTest {
         user1.setFirst_name("Anton");
         user1.setLast_name("Kolobok");
         user1.setSex("1");
-
+        //
         User user2 = new User();
         user2.setBdate("22.06.1988");
         user2.setCity("Penza");
