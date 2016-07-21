@@ -1,29 +1,15 @@
 package ml.fli.utils;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import com.google.common.base.Strings;
 import ml.fli.models.User;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ArffLoader;
-import weka.core.converters.Loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class UsersConverter {
-    private static final String CHARSET = "UTF-8";
-    private static final String LOCATION = System.getProperty("user.dir");
-
     //TODO сейчас валится исключение, если у пользователя есть пустые поля. Надо пофиксить
     //для этого в м-де writeBody проверять значения и заменять пустые на что-нибудь другое
 
@@ -38,78 +24,40 @@ public class UsersConverter {
             throw new IllegalArgumentException("Empty users list");
         }
 
-        File file = Paths.get(LOCATION, System.nanoTime() + ".arff").toFile();
+        //generate attributes
+        ArrayList<Attribute> attributesList = new ArrayList<Attribute>();
 
-        writeHeader(file);
-        writeBody(file, users);
+        Attribute id = new Attribute("Id", (ArrayList<String>) null);
+        Attribute first_name = new Attribute("First_name", (ArrayList<String>) null);
+        Attribute last_name = new Attribute("Last_name", (ArrayList<String>) null);
+        Attribute sex = new Attribute("Sex", (ArrayList<String>) null);
+        Attribute city = new Attribute("Home_town", (ArrayList<String>) null);
+        Attribute bdate = new Attribute("Bdate", (ArrayList<String>) null);
 
-        return buildResult(file);
-    }
+        attributesList.add(id);
+        attributesList.add(first_name);
+        attributesList.add(last_name);
+        attributesList.add(sex);
+        attributesList.add(city);
+        attributesList.add(bdate);
 
-    private static void writeHeader(File file) {
-        try (PrintWriter writer = new PrintWriter(file, CHARSET)) {
-            writer.println("@Relation Users");
-            writer.println("");
-            writer.println("@attribute first_name string");
-            writer.println("@attribute last_name string");
-            writer.println("@attribute sex string");
-            writer.println("@attribute city string");
-            writer.println("@attribute bdate NUMERIC");
-            writer.println("");
-            writer.println("@data");
-            writer.close();
-        } catch (Exception e) {
-            throw Errors.asUnchecked(e);
-        }
-    }
+        // cast to instances
+        Instances dataSet = new Instances("Users", attributesList, 0);
+        dataSet.attribute("Id").setWeight(0.0);
 
-    private static void writeBody(File file, Set<User> users) {
-        try (CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(file, true), CHARSET))) {
-            //должен быть локальным, т.к. не thread safe
-            final DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        for (User user : users) {
+            double[] values = new double[dataSet.numAttributes()];
 
-            String[] entries = new String[6];
-
-            for (User user : users) {
-                String bDate = getUserBDate(user, format);
-
-                entries[0] = Strings.isNullOrEmpty(user.getFirst_name()) ? "" : user.getFirst_name();
-                entries[1] = Strings.isNullOrEmpty(user.getLast_name()) ? "" : user.getLast_name();
-                entries[2] = Strings.isNullOrEmpty(user.getSex()) ? "" : user.getSex();
-                entries[3] = Strings.isNullOrEmpty(user.getCity()) ? "" : user.getCity();
-                entries[4] = bDate;
-                csvWriter.writeNext(entries);
-            }
-        } catch (Exception e) {
-            throw Errors.asUnchecked(e);
-        }
-    }
-
-    private static String getUserBDate(User user, DateFormat format)  {
-        if (Strings.isNullOrEmpty(user.getBdate())) {
-            return String.valueOf(Integer.MIN_VALUE);
+            values[0] = dataSet.attribute("Id").addStringValue(user.getId());
+            values[1] = dataSet.attribute(1).addStringValue(user.getFirst_name());
+            values[2] = dataSet.attribute(2).addStringValue(user.getLast_name());
+            values[3] = dataSet.attribute(3).addStringValue(user.getSex());
+            values[4] = dataSet.attribute(4).addStringValue((user.getCity() != null) ? user.getCity() : "");
+            values[5] = dataSet.attribute(5).addStringValue((user.getBdate() != null) ? user.getBdate() : "");
+            Instance instance = new DenseInstance(1.0, values);
+            dataSet.add(instance);
         }
 
-        try {
-            Date date = format.parse(user.getBdate());
-
-            return String.valueOf(date.getTime());
-        } catch (ParseException e) {
-            return String.valueOf(Integer.MIN_VALUE);
-        }
-    }
-
-    private static Instances buildResult(File file) {
-        try (InputStream arffFile = new FileInputStream(file)) {
-            Loader loader = new ArffLoader();
-            loader.setSource(arffFile);
-            Instances result = loader.getDataSet();
-
-            file.delete();
-
-            return result;
-        } catch (Exception e) {
-            throw Errors.asUnchecked(e);
-        }
+        return dataSet;
     }
 }

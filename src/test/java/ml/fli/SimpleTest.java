@@ -1,9 +1,9 @@
 package ml.fli;
 
-
 import ml.fli.controllers.UsersController;
 import ml.fli.models.*;
 import ml.fli.utils.JSONParser;
+import ml.fli.utils.DataGenerator;
 import ml.fli.utils.JsonConverter;
 import ml.fli.utils.UsersConverter;
 import ml.fli.utils.VkApi;
@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import weka.clusterers.Clusterer;
 import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
@@ -56,11 +58,251 @@ public class SimpleTest {
         assertNotNull(restTemplate);
     }
 
+    @Test
+    // on deck of cards
+    public void ClusteringTest() throws Exception {
+
+        Instances data = DataGenerator.Generate();
+        data.attribute(0).setWeight(0.0);
+        data.attribute(1).setWeight(1.0);
+
+        SimpleKMeans clusterer = new SimpleKMeans();
+        clusterer.setNumClusters(4);
+        clusterer.buildClusterer(data);
+
+        //region output
+        double[] arr = clusterer.getClusterSizes();
+        for (int i = 0; i <= arr.length - 1; i++) {
+            System.out.println("Cluster #" + Integer.toString(i) + ":" + Double.toString(arr[i]));
+        }
+        System.out.println("Error " + Double.toString(clusterer.getSquaredError()));
+
+        Set<Instance> firstCluster = new HashSet<>();
+        Set<Instance> secondCluster = new HashSet<>();
+        Set<Instance> thirdCluster = new HashSet<>();
+        Set<Instance> fourCluster = new HashSet<>();
+
+        for (Instance instance : data) {
+            if (clusterer.clusterInstance(instance) == 0) {
+                firstCluster.add(instance);
+            }
+            if (clusterer.clusterInstance(instance) == 1) {
+                secondCluster.add(instance);
+            }
+            if (clusterer.clusterInstance(instance) == 2) {
+                thirdCluster.add(instance);
+            }
+            if (clusterer.clusterInstance(instance) == 3) {
+                fourCluster.add(instance);
+            }
+        }
+
+
+        System.out.println("first");
+        for (Instance instance : firstCluster) {
+            System.out.print(instance + " ");
+        }
+        System.out.println();
+        System.out.println("second");
+        for (Instance instance : secondCluster) {
+            System.out.print(instance + " ");
+        }
+        System.out.println();
+        System.out.println("third");
+        for (Instance instance : thirdCluster) {
+            System.out.print(instance + " ");
+        }
+        System.out.println();
+        System.out.println("four");
+        for (Instance instance : fourCluster) {
+            System.out.print(instance + " ");
+        }
+        System.out.println();
+
+
+        //endregion
+
+        double error = 1.0;
+        int n = 2;
+        while (error != 0.0) {
+            SimpleKMeans cluster = new SimpleKMeans();
+
+            cluster.setNumClusters(n);
+            cluster.buildClusterer(data);
+
+            System.out.println(cluster.getNumClusters());
+
+            error = cluster.getSquaredError();
+            System.out.println(error);
+            n++;
+        }
+
+    }
+
+    @Test
+    // on some mock-users
+    public void ClusteringUserTest() throws Exception {
+
+        //OMG
+        User u1 = new User("30429836", "Женя", "Дубик", "2", "18.11", "Gabberland");
+        User u2 = new User("32955433", "Алексей", "Митенев", "2", "23.11.1992", "Тюмень");
+        User u3 = new User("32955433", "Кристина", "Клайд ", "1", "1.4", "Братск");
+        User u4 = new User("3456845743", "asfd", "sdf", "1", "", "agfadg");
+        User u5 = new User("1345645", "fd", "SDFASF", "2", "", "aggadg");
+        User u6 = new User("13654", "ASDFASF", "dfbsv", "2", "", "agdfg");
+        User u7 = new User("23564765", "adfadg", "agdf", "2", "", "agfgadg");
+        Set<User> users = new HashSet<User>();
+        users.add(u1);
+        users.add(u2);
+        users.add(u3);
+        users.add(u4);
+        users.add(u5);
+        users.add(u6);
+        users.add(u6);
+        users.add(u7);
+
+        Instances dataSet = UsersConverter.usersToInstances(users);
+
+
+        //tfidf
+        StringToWordVector filter = getVectorizer();
+        filter.setInputFormat(dataSet);
+        Instances dataFiltered = Filter.useFilter(dataSet, filter);
+
+        // some evaluation
+        double error = 0.1;
+        int numClusters = 2;
+        while (true) {
+            SimpleKMeans clusterer = new SimpleKMeans();
+            clusterer.setNumClusters(numClusters);
+            clusterer.buildClusterer(dataFiltered);
+
+
+            //output
+            System.out.println("# clusters: " + Integer.toString(numClusters));
+            double[] arr = clusterer.getClusterSizes();
+            System.out.println("Cluster sizes");
+            for (int i = 0; i <= arr.length - 1; i++)
+                System.out.println("\tCluster #" + Integer.toString(i) + ":" + Double.toString(arr[i]));
+            System.out.println("Error " + Double.toString(clusterer.getSquaredError()));
+
+            for (Instance instance : dataFiltered) {
+                System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+                System.out.println(instance.toString());
+            }
+            System.out.println("#####################################");
+            numClusters++;
+            if (numClusters >= users.size())
+                break;
+
+        }
+
+    }
+
+    @Test
+    // on real vk users
+    public void ClusterVKUserTest() throws Exception {
+        String searchingUserId = "7272824";
+
+        //get vk data
+        VkApi vkApi = new VkApi();
+
+        String resultOneUser = vkApi.getUser(searchingUserId);
+        JSONParser parser = new JSONParser();
+        User oneUser = parser.parseUser(resultOneUser);
+
+        String choiceSex = "2"; //TODO sexEnum
+        VkApiParams param = VkApiParams.create();
+        if (oneUser.getCity() instanceof String) {
+            param.add("city", "1");
+        }
+        if (oneUser.getBdate() instanceof String) {
+            String year = oneUser.getBdate();
+            if (year.length() > 5) {
+                Calendar calendar = Calendar.getInstance();
+
+                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(4));
+                param.add("age", String.valueOf(age));
+            }
+        }
+        param.add("sex", choiceSex);
+        String resultUserList = vkApi.getUsersList(param);
+        ArrayList<User> listUsers = parser.parseUsers(resultUserList);
+        listUsers.add(oneUser);
+
+        // clusterer evaluation
+        Instances dataSet = UsersConverter.usersToInstances(new HashSet<User>(listUsers));
+        StringToWordVector filter = getVectorizer();
+        filter.setInputFormat(dataSet);
+        Instances dataFiltered = Filter.useFilter(dataSet, filter);
+
+
+        double error = 0.0;
+        int numClusters = 2;
+        //that's how we roll!
+
+        Random rnd = new Random();
+        int randomAccuracy = rnd.nextInt((5 - 3) + 1) + 3; // 3-5
+        while (true) {
+            SimpleKMeans clusterer = new SimpleKMeans();
+            clusterer.setNumClusters(numClusters);
+
+            clusterer.buildClusterer(dataFiltered);
+
+            double thisError = clusterer.getSquaredError();
+            if (numClusters == 2) {
+                error = thisError;
+                numClusters++;
+                continue;
+            }
+
+            System.out.println("current n:" + numClusters);
+            System.out.println("Current error: " + thisError);
+            System.out.println("Cluster sizes");
+            double[] arr = clusterer.getClusterSizes();
+            for (int i = 0; i <= arr.length - 1; i++) {
+                System.out.println("\tCluster #" + Integer.toString(i) + ":" + Double.toString(arr[i]));
+            }
+            double errorDiff = error - thisError;
+            System.out.println("Error diff: " + errorDiff);
+
+            if (errorDiff <= randomAccuracy) {
+                //find cluster with searced user
+                //FIXME не будет работать до тех пор, пока мы не вернемся от tfidf к строкам
+                // почему? ПАТАМУШТА наш ID из "1234" превратится в неведомый вектор
+                int searchedClustererIndex = 0;
+                for (Instance user : dataFiltered) {
+                    // 0 == Id
+                    if (user.attribute(0).equals(searchingUserId)) {
+                        searchedClustererIndex = clusterer.clusterInstance(user);
+                    }
+                }
+
+                Set<Instance> searchedClusterer = new HashSet<>();
+
+                for (Instance instance : dataFiltered) {
+                    if (clusterer.clusterInstance(instance) == searchedClustererIndex) {
+                        searchedClusterer.add(instance);
+                    }
+                }
+                System.out.println("Searched Clusterer is clusterer #" + searchedClustererIndex);
+                for (Instance instance : searchedClusterer) {
+                    System.out.println(instance);
+                }
+                break;
+            }
+            numClusters++;
+            error = thisError;
+            if (numClusters >= listUsers.size())
+                break;
+        }
+
+    }
 
     @Test
     public void tfIdfTest() throws Exception {
         try (
-            InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
+                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
         ) {
             //JSONLoader loader = new JSONLoader();
             //loader.setSource(json);
@@ -196,7 +438,6 @@ public class SimpleTest {
         }
 
     }
-
     @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
@@ -236,6 +477,7 @@ public class SimpleTest {
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
     }
+
 
     @Test
     public void jsonConverterTest() throws Exception {
@@ -316,19 +558,19 @@ public class SimpleTest {
 
     private String getUsersJson() {
         return "{\n" +
-            "  \"response\": {\n" +
-            "    \"count\": 2308981,\n" +
-            "    \"items\": [\n" +
-            "      {\n" +
-            "        \"id\": 30429836,\n" +
-            "        \"first_name\": \"Женя\",\n" +
-            "        \"last_name\": \"Дубик\",\n" +
-            "        \"sex\": 2,\n" +
-            "        \"bdate\": \"18.11\",\n" +
-            "        \"home_town\": \"Gabberland\"\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  }\n" +
-            "}";
+                "  \"response\": {\n" +
+                "    \"count\": 2308981,\n" +
+                "    \"items\": [\n" +
+                "      {\n" +
+                "        \"id\": 30429836,\n" +
+                "        \"first_name\": \"Женя\",\n" +
+                "        \"last_name\": \"Дубик\",\n" +
+                "        \"sex\": 2,\n" +
+                "        \"bdate\": \"18.11\",\n" +
+                "        \"home_town\": \"Gabberland\"\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}";
     }
 }
