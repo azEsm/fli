@@ -2,52 +2,50 @@ package ml.fli.services;
 
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
-import ml.fli.models.FrontendResponseOneUser;
-import ml.fli.models.User;
-import ml.fli.utils.JSONParser;
-import ml.fli.utils.VkApi;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import java.util.Set;
 
 @Service
 public class MockUsersServiceImpl implements UsersService {
     @Override
     public FrontendResponse get(@Nonnull FrontendRequest request) {
-        String userId = request.getUserId();
-        String choiceSex = request.getSex();
+        return getSomeUsers();
+    }
 
-        ArrayList<FrontendResponseOneUser> userList = new ArrayList<>();
-        FrontendResponseOneUser user = new FrontendResponseOneUser();
-        user.setUserName("Катя Клэп");
-        user.setUserUrl("vk.com/id5592362");
-        user.setUserPic("https:\\/\\/pp.vk.me\\/c633221\\/v633221362\\/39410\\/MT0d_XiMpqs.jpg");
-        user.setWeight(10);
-        userList.add(user);
+    public FrontendResponse getSomeUsers() {
+        FrontendResponse result = new FrontendResponse();
+        Set<FrontendResponse.Raw> raws = result.getResult();
 
-        user.setUserName("Саша Спилберг");
-        user.setUserUrl("vk.com/id169902419");
-        user.setUserPic("https:\\/\\/pp.vk.me\\/c629217\\/v629217419\\/3acbf\\/FslTGsjOYI4.jpg");
-        user.setWeight(5);
-        userList.add(user);
+        FrontendResponse.Raw first = new FrontendResponse.Raw();
+        first.setPhotoUrl("https://pp.vk.me/c608629/v608629069/10ca/GcoqLLRzGo4.jpg");
+        first.setAccountUrl("https://vk.com/id186928069");
+        first.setName("Марк Горшков");
+        first.setRate(0.0);
+        raws.add(first);
 
-        try {
-            VkApi vkApi = new VkApi();
-            String vkUser = vkApi.getUser(userId);
-            JSONParser parser = new JSONParser();
-            User resultUser = parser.parseUser(vkUser);
+        FrontendResponse.Raw second = new FrontendResponse.Raw();
+        second.setPhotoUrl("https://pp.vk.me/c626120/v626120705/20501/kLe17uoUAG4.jpg");
+        second.setAccountUrl("https://vk.com/id269611705");
+        second.setName("Алексей Царапкин");
+        second.setRate(0.1);
+        raws.add(second);
 
-            user.setUserName(resultUser.getFirst_name() + " " + resultUser.getLast_name());
-            user.setUserUrl("vk.com/id" + userId);
-            user.setUserPic("https:\\/\\/pp.vk.me\\/c636420\\/v636420403\\/f914\\/-ULWasYdyNs.jpg");
-            user.setWeight(3);
-            userList.add(user);
-        } catch (Exception e) {
-            System.out.println("Ошибка! Невозможно получить данные о пользователе");
-        }
+        FrontendResponse.Raw third = new FrontendResponse.Raw();
+        third.setPhotoUrl("https://pp.vk.me/c631929/v631929744/1e8ab/rz3_QHhI86E.jpg");
+        third.setAccountUrl("https://vk.com/id347750744");
+        third.setName("Виталий Горышев");
+        third.setRate(0.3);
+        raws.add(third);
 
-        return new FrontendResponse(userList);
+        FrontendResponse.Raw forth = new FrontendResponse.Raw();
+        forth.setPhotoUrl("https://pp.vk.me/c626119/v626119383/2899/kkAF3WOwEc0.jpg");
+        forth.setAccountUrl("https://vk.com/sweetkina");
+        forth.setName("Лена Ленская");
+        forth.setRate(0.9);
+        raws.add(forth);
+
+        return result;
     }
 }
