@@ -35,7 +35,7 @@ public final class VkApi {
     }
     //Заполнение параметров для получения списка пользователя по заданным значениям
     public String getUsersList(VkApiParams param) throws IOException {
-        Params parameter = Params.create().add("count","10");
+        Params parameter = Params.create().add("count", "100");
         String value = param.getItem("city");
         if (value != "") {
             parameter.add("city", value);
