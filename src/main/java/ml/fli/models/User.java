@@ -1,13 +1,7 @@
 package ml.fli.models;
 
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class User {
-    private String id;
+    private int id;
 
     private String first_name;
 
@@ -21,11 +15,11 @@ public class User {
 
     private String photo_400_orig;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -87,7 +81,7 @@ public class User {
 
     }
 
-    public User(String id, String first_name, String last_name, String sex, String bdate, String city) {
+    public User(int id, String first_name, String last_name, String sex, String bdate, String city) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;

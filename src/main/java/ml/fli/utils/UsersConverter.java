@@ -27,7 +27,7 @@ public class UsersConverter {
         //generate attributes
         ArrayList<Attribute> attributesList = new ArrayList<Attribute>();
 
-        Attribute id = new Attribute("Id", (ArrayList<String>) null);
+        Attribute id = new Attribute("Id");
         Attribute first_name = new Attribute("First_name", (ArrayList<String>) null);
         Attribute last_name = new Attribute("Last_name", (ArrayList<String>) null);
         Attribute sex = new Attribute("Sex", (ArrayList<String>) null);
@@ -43,12 +43,12 @@ public class UsersConverter {
 
         // cast to instances
         Instances dataSet = new Instances("Users", attributesList, 0);
-        dataSet.attribute("Id").setWeight(0.0);
+        //dataSet.attribute("Id").setWeight(0.0);
 
         for (User user : users) {
             double[] values = new double[dataSet.numAttributes()];
 
-            values[0] = dataSet.attribute("Id").addStringValue(user.getId());
+            values[0] = (double)user.getId();
             values[1] = dataSet.attribute(1).addStringValue(user.getFirst_name());
             values[2] = dataSet.attribute(2).addStringValue(user.getLast_name());
             values[3] = dataSet.attribute(3).addStringValue(user.getSex());

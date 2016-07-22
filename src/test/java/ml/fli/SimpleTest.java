@@ -145,13 +145,13 @@ public class SimpleTest {
     public void ClusteringUserTest() throws Exception {
 
         //OMG
-        User u1 = new User("30429836", "Женя", "Дубик", "2", "18.11", "Gabberland");
-        User u2 = new User("32955433", "Алексей", "Митенев", "2", "23.11.1992", "Тюмень");
-        User u3 = new User("32955433", "Кристина", "Клайд ", "1", "1.4", "Братск");
-        User u4 = new User("3456845743", "asfd", "sdf", "1", "", "agfadg");
-        User u5 = new User("1345645", "fd", "SDFASF", "2", "", "aggadg");
-        User u6 = new User("13654", "ASDFASF", "dfbsv", "2", "", "agdfg");
-        User u7 = new User("23564765", "adfadg", "agdf", "2", "", "agfgadg");
+        User u1 = new User(30429836, "Женя", "Дубик", "2", "18.11", "Gabberland");
+        User u2 = new User(32955433, "Алексей", "Митенев", "2", "23.11.1992", "Тюмень");
+        User u3 = new User(32955433, "Кристина", "Клайд ", "1", "1.4", "Братск");
+        User u4 = new User(34545743, "asfd", "sdf", "1", "", "agfadg");
+        User u5 = new User(1345645, "fd", "SDFASF", "2", "", "aggadg");
+        User u6 = new User(13654, "ASDFASF", "dfbsv", "2", "", "agdfg");
+        User u7 = new User(23564765, "adfadg", "agdf", "2", "", "agfgadg");
         Set<User> users = new HashSet<User>();
         users.add(u1);
         users.add(u2);
@@ -228,14 +228,24 @@ public class SimpleTest {
         }
         param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
-        ArrayList<User> listUsers = parser.parseUsers(resultUserList);
+        List<User> listUsers = parser.parseUsers(resultUserList);
         listUsers.add(oneUser);
 
         // clusterer evaluation
         Instances dataSet = UsersConverter.usersToInstances(new HashSet<User>(listUsers));
-        StringToWordVector filter = getVectorizer();
+        //StringToWordVector filter = getVectorizer();
+
+        StringToWordVector filter = new StringToWordVector();
+        filter.setAttributeIndicesArray(new int[]{1, 2, 3, 4, 5});
         filter.setInputFormat(dataSet);
+        filter.setIDFTransform(true);
+        filter.setTFTransform(true);
+
         Instances dataFiltered = Filter.useFilter(dataSet, filter);
+
+        Instance tmp = dataFiltered.instance(0);
+        System.out.println(tmp);
+        int tmpID = (int)tmp.value(0);
 
 
         double error = 0.0;
@@ -267,29 +277,42 @@ public class SimpleTest {
             double errorDiff = error - thisError;
             System.out.println("Error diff: " + errorDiff);
 
-            if (errorDiff <= randomAccuracy) {
+            if (numClusters== 13) {
+                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                 //find cluster with searced user
-                //FIXME не будет работать до тех пор, пока мы не вернемся от tfidf к строкам
-                // почему? ПАТАМУШТА наш ID из "1234" превратится в неведомый вектор
                 int searchedClustererIndex = 0;
                 for (Instance user : dataFiltered) {
-                    // 0 == Id
-                    if (user.attribute(0).equals(searchingUserId)) {
+                    if ( (int)user.value(0) == Integer.parseInt(searchingUserId)) {
                         searchedClustererIndex = clusterer.clusterInstance(user);
                     }
                 }
 
-                Set<Instance> searchedClusterer = new HashSet<>();
+                List<Integer> findedUSers = new ArrayList<Integer>();
 
                 for (Instance instance : dataFiltered) {
                     if (clusterer.clusterInstance(instance) == searchedClustererIndex) {
-                        searchedClusterer.add(instance);
+                        findedUSers.add((int)instance.value(0));
                     }
                 }
-                System.out.println("Searched Clusterer is clusterer #" + searchedClustererIndex);
-                for (Instance instance : searchedClusterer) {
-                    System.out.println(instance);
+
+                Set<Instance> thisData = new HashSet<Instance>();
+
+                for (Instance inst: dataSet)
+                {
+                    for(Integer id: findedUSers)
+                    {
+                        if (( (int)inst.value(0)) == id)
+                        {
+                            thisData.add(inst);
+                        }
+                    }
                 }
+
+                System.out.println("Searched Clusterer is clusterer #" + searchedClustererIndex);
+                for(Instance inst: thisData )
+                    {
+                        System.out.println(inst);
+                    }
                 break;
             }
             numClusters++;
@@ -470,7 +493,7 @@ public class SimpleTest {
         }
         param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
-        ArrayList<User> listUsers = parser.parseUsers(resultUserList);
+        List<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
     }
@@ -516,7 +539,7 @@ public class SimpleTest {
 
     private Set<User> buildUsers() {
         User user = new User();
-        user.setId("123");
+        user.setId(123);
         user.setFirst_name("Иван");
         user.setLast_name("Петров");
         user.setCity("456");
@@ -530,6 +553,7 @@ public class SimpleTest {
 
     private StringToWordVector getVectorizer() {
         StringToWordVector vectorizer = new StringToWordVector();
+        vectorizer.setAttributeIndicesArray(new int[]{1, 2, 3, 4, 5});
         vectorizer.setIDFTransform(true);
         vectorizer.setTFTransform(true);
         return vectorizer;

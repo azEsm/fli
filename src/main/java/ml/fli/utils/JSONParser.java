@@ -5,10 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 import ml.fli.models.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class JSONParser {
 
@@ -20,7 +20,7 @@ public class JSONParser {
         JsonElement element = parser.parse(vkApiUser);
         JsonArray response = element.getAsJsonObject().getAsJsonArray("response");
         JsonObject user = response.get(0).getAsJsonObject();
-        userResult.setId(user.get("id").getAsString());
+        userResult.setId(user.get("id").getAsInt());
         userResult.setFirst_name(user.get("first_name").getAsString());
         userResult.setLast_name(user.get("last_name").getAsString());
         userResult.setSex(user.get("sex").getAsString());
@@ -34,8 +34,8 @@ public class JSONParser {
         return userResult;
     }
 
-    public ArrayList<User> parseUsers(String vkApiListUsers) {
-        ArrayList<User> listUsers = new ArrayList<>();
+    public List<User> parseUsers(String vkApiListUsers) {
+        List<User> listUsers = new ArrayList<>();
 
         JsonElement element = parser.parse(vkApiListUsers);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
@@ -43,7 +43,7 @@ public class JSONParser {
         for (int i = 0; i < items.size(); i++) {
             User oneUser = new User();
             JsonObject user = items.get(i).getAsJsonObject();
-            oneUser.setId(user.get("id").getAsString());
+            oneUser.setId(user.get("id").getAsInt());
             oneUser.setFirst_name(user.get("first_name").getAsString());
             oneUser.setLast_name(user.get("last_name").getAsString());
             oneUser.setSex(user.get("sex").getAsString());
