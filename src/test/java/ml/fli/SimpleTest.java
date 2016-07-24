@@ -1,11 +1,9 @@
 package ml.fli;
 
 import ml.fli.controllers.UsersController;
-import ml.fli.models.FrontendRequest;
-import ml.fli.models.FrontendResponse;
-import ml.fli.models.Response;
-import ml.fli.models.User;
-import ml.fli.models.VkApiParams;
+import ml.fli.models.*;
+import ml.fli.services.MockUsersServiceImpl;
+import ml.fli.services.UsersService;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.JsonConverter;
 import ml.fli.utils.UsersConverter;
@@ -32,7 +30,6 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -231,11 +228,19 @@ public class SimpleTest {
         }
         param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
-        ArrayList<User> listUsers = parser.parseUsers(resultUserList);
+        Set<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
     }
 
+    private UsersService usersService;
+
+    @Test
+    public void getVkApi() throws Exception {
+        FrontendResponse result = ((MockUsersServiceImpl) usersService).getVkApi();
+        assertNotNull(result);
+        assertEquals(10, result.getResult().size());
+    }
 
     @Test
     public void jsonConverterTest() throws Exception {

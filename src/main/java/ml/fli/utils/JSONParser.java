@@ -7,7 +7,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ml.fli.models.User;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JSONParser {
 
@@ -33,8 +34,8 @@ public class JSONParser {
         return userResult;
     }
 
-    public ArrayList<User> parseUsers(String vkApiListUsers) {
-        ArrayList<User> listUsers = new ArrayList<>();
+    public Set<User> parseUsers(String vkApiListUsers) {
+        Set<User> listUsers = new HashSet<>();
 
         JsonElement element = parser.parse(vkApiListUsers);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");

@@ -1,4 +1,6 @@
-﻿function send(){
+﻿var stompClient = null
+
+function send(){
 
     var userId = document.getElementById("str").value;//https://new.vk.com/nalmezel
     var userSex = document.getElementById("sex").value;
@@ -9,12 +11,39 @@
 
     var userJson = toJson(userId, userSex);
 
-    var socket = new WebSocket("ws://echo.websocket.org");//test
 
-    socket.onopen = connectionOpen;
-    socket.onmessage = messageReceived;
+     /function connect() {
+                    var socket = new SockJS('/hello');
+                    stompClient = Stomp.over(socket);
+                    stompClient.connect({}, function(frame) {
+                        setConnected(true);
+                        console.log('Connected: ' + frame);
+                        stompClient.subscribe('/topic/greetings', function(greeting){
+                            showGreeting(JSON.parse(greeting.body).content);
+                        });
+                    });
+                }
 
-    var user = [{
+    function setConnected(connected) {
+                document.getElementById('connect').disabled = connected;
+                document.getElementById('disconnect').disabled = !connected;
+                document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+                document.getElementById('response').innerHTML = '';
+            }
+
+
+
+
+
+
+
+
+    //var socket = new WebSocket("ws://echo.websocket.org");//test
+
+    //socket.onopen = connectionOpen;
+    //socket.onmessage = messageReceived;
+
+    /*var user = [{
         photo: "images/ava.jpg",
         name: "Павел Дуров",
         url:"https://new.vk.com/durov",
@@ -49,12 +78,14 @@
          name: "Михаил Ефремов",
          url:"https://new.vk.com/shalom1488rebbe",
          range: 3
-    }];
+    }];*/
 
 
-    Json = JSON.stringify(user);
 
-    function connectionOpen() {
+
+    //Json = JSON.stringify(user);
+
+   /* function connectionOpen() {
         socket.send(Json);
     }
 
@@ -63,7 +94,7 @@
         var messageLog = document.getElementById("messageLog");
         answer = event.data;
         answer1(answer);
-    }
+    }*/
 }
 
 function toJson(userId, userSex){
@@ -82,6 +113,9 @@ function reg(str){
     str=str.replace(/.+vk.com\//,"")
     return str;
 }
+
+
+
 
 function answer1(answer){
 

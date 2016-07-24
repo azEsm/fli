@@ -2,6 +2,10 @@ package ml.fli.services;
 
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
+import ml.fli.models.User;
+import ml.fli.models.VkApiParams;
+import ml.fli.utils.JSONParser;
+import ml.fli.utils.VkApi;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
@@ -45,6 +49,36 @@ public class MockUsersServiceImpl implements UsersService {
         forth.setName("Лена Ленская");
         forth.setRate(0.9);
         raws.add(forth);
+
+        return result;
+    }
+
+    public FrontendResponse getVkApi() {
+        VkApi vkApi = new VkApi();
+        FrontendResponse result = new FrontendResponse();
+        VkApiParams param = VkApiParams.create();
+        JSONParser parser = new JSONParser();
+        try {
+            String Users = vkApi.getUsersList(param);
+            
+            Set<User> vkApiresult = parser.parseUsers(Users);
+
+            Set<FrontendResponse.Raw> raws = result.getResult();
+
+            double rate = 0;
+            for (User oneUser: vkApiresult) {
+                rate += 0.1;
+                FrontendResponse.Raw resultUser = new FrontendResponse.Raw();
+                resultUser.setAccountUrl("https://vk.com/id" + oneUser.getId());
+                resultUser.setName(oneUser.getFirst_name() + " " + oneUser.getLast_name());
+                resultUser.setPhotoUrl(oneUser.getPhoto_400_orig());
+                resultUser.setRate(rate);
+                raws.add(resultUser);
+            }
+            
+        } catch (Exception e) {
+
+        }
 
         return result;
     }
