@@ -5,10 +5,11 @@ import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
 import ml.fli.models.Response;
 import ml.fli.models.User;
+import ml.fli.models.VkApiParams;
+import ml.fli.utils.JSONParser;
 import ml.fli.utils.JsonConverter;
-import ml.fli.utils.VkApi;
-import org.junit.Assert;
 import ml.fli.utils.UsersConverter;
+import ml.fli.utils.VkApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 import weka.clusterers.Clusterer;
+import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -28,13 +30,16 @@ import weka.core.converters.Loader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
@@ -59,8 +64,7 @@ public class SimpleTest {
     @Test
     public void tfIdfTest() throws Exception {
         try (
-                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
-                //InputStream json = this.getClass().getClassLoader().getResourceAsStream("users.json")
+            InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
         ) {
             //JSONLoader loader = new JSONLoader();
             //loader.setSource(json);
@@ -90,9 +94,96 @@ public class SimpleTest {
             }
         }
     }
+
     @Test
-    public void tfIdfJSONTest() throws Exception{
-        try(InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")){
+    public void usersClassificationTest() throws Exception {
+        Set<User> users = buildSomeUsers();
+
+        Instances rowData = UsersConverter.usersToInstances(users);
+        logger.info("\n\nImported data: \n{}\n\n", rowData);
+
+        EM clusterer = buildEMClusterer();
+
+        StringToWordVector filter = getVectorizer();
+        filter.setInputFormat(rowData);
+        Instances dataFiltered = Filter.useFilter(rowData, filter);
+        logger.info("\n\nFiltered data: \n{}\n\n", dataFiltered);
+
+        clusterer.buildClusterer(dataFiltered);
+
+        System.out.println("\n\nNumber of clusters: " + clusterer.numberOfClusters());
+        for (Instance instance : dataFiltered) {
+            System.out.println(instance.toString());
+            System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+        }
+
+//        ClusterEvaluation evaluation = new ClusterEvaluation();
+//        evaluation.setClusterer(clusterer);
+//        evaluation.evaluateClusterer();
+    }
+
+    private EM buildEMClusterer() throws Exception {
+        EM clusterer = new EM();
+        clusterer.setNumClusters(4);
+
+        String[] options = new String[2];
+        options[0] = "-I";// max. iterations
+        options[1] = "100";
+
+        clusterer.setOptions(options);
+        return clusterer;
+    }
+
+    private Set<User> buildSomeUsers() {
+        Set<User> users = new HashSet<>();
+
+        User user1 = new User();
+        user1.setBdate("01.01.1999");
+        user1.setCity("Penza");
+        user1.setFirst_name("Anton");
+        user1.setLast_name("Kolobok");
+        user1.setSex("1");
+        //
+        User user2 = new User();
+        user2.setBdate("22.06.1988");
+        user2.setCity("Penza");
+        user2.setFirst_name("Asad");
+        user2.setLast_name("Posget");
+        user2.setSex("2");
+
+        User user3 = new User();
+        user3.setBdate("21.03.1981");
+        user3.setCity("Penza");
+        user3.setFirst_name("Asadgdsd");
+        user3.setLast_name("Posggdset");
+        user3.setSex("2");
+
+        User user4 = new User();
+        user4.setBdate("02.02.1918");
+        user4.setCity("Penza");
+        user4.setFirst_name("Asssfad");
+        user4.setLast_name("Pogfdsget");
+        user4.setSex("1");
+
+        User user5 = new User();
+        user5.setBdate("12.05.1928");
+        user5.setCity("Penza");
+        user5.setFirst_name("Awerwesad");
+        user5.setLast_name("Posgeetdgdt");
+        user5.setSex("1");
+
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
+        users.add(user4);
+        users.add(user5);
+
+        return users;
+    }
+
+    @Test
+    public void tfIdfJSONTest() throws Exception {
+        try (InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
             Response response = JsonConverter.jsonToObject(sourceFile, Response.class);
             assertNotNull(response);
             assertNotNull(response.getResponse());
@@ -109,32 +200,40 @@ public class SimpleTest {
         }
 
     }
-
     @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
 
-        String resultOneUser = vkApi.getUser("132154659");
+        String resultOneUser = vkApi.getUser("5592362");
         JSONParser parser = new JSONParser();
         User oneUser = parser.parseUser(resultOneUser);
-        logger.info("\nResultUser:\n{}", oneUser.getId());
+        logger.info("\nResultUser:\n{}", oneUser.getId() + " " + oneUser.getFirst_name() + " "
+                + oneUser.getLast_name() + " " + oneUser.getSex() + " " + oneUser.getBdate());
 
         String resultGroup = vkApi.getUserGroups(132154659,10);
         logger.info("\nResultGroup:\n{}", resultGroup);
         String resultAudio = vkApi.getUserAudios(132154659,10);
         logger.info("\nResultAudio:\n{}", resultAudio);
 
+        String choiceSex = "1";
         VkApiParams param = VkApiParams.create();
-        param.add("city", "1").add("sex", "1").add("age", "25");
+        if (oneUser.getCity() instanceof String) {
+            param.add("city", oneUser.getCity());
+        }
+        if (oneUser.getBdate() instanceof String) {
+            String year = oneUser.getBdate();
+            if (year.length() > 5) {
+                Calendar calendar = Calendar.getInstance();
+
+                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(5));
+                param.add("age", String.valueOf(age));
+            }
+        }
+        param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
         ArrayList<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
-    }
-
-    @Test
-    public void transferControllerTest() throws Exception {
-
     }
 
 
@@ -169,6 +268,28 @@ public class SimpleTest {
         assertNotNull(users);
     }
 
+    @Test
+    public void usersLoaderTest() throws Exception {
+        Set<User> users = buildUsers();
+        Instances instances = UsersConverter.usersToInstances(users);
+        assertNotNull(instances);
+        assertEquals(users.size(), instances.size());
+    }
+
+    private Set<User> buildUsers() {
+        User user = new User();
+        user.setId("123");
+        user.setFirst_name("Иван");
+        user.setLast_name("Петров");
+        user.setCity("456");
+        user.setSex("3");
+        user.setBdate("2016");
+        Set<User> result = new HashSet<>();
+        result.add(user);
+
+        return result;
+    }
+
     private StringToWordVector getVectorizer() {
         StringToWordVector vectorizer = new StringToWordVector();
         vectorizer.setIDFTransform(true);
@@ -176,7 +297,7 @@ public class SimpleTest {
         return vectorizer;
     }
 
-    private Loader getCsvLoader(InputStream input) throws Exception{
+    private Loader getCsvLoader(InputStream input) throws Exception {
         CSVLoader csvLoader = new CSVLoader();
         csvLoader.setSource(input);
         String[] options = new String[1];
@@ -185,7 +306,8 @@ public class SimpleTest {
 
         return csvLoader;
     }
-    private Loader getJsonLoader(InputStream input) throws Exception{
+
+    private Loader getJsonLoader(InputStream input) throws Exception {
         JSONLoader jsonLoader = new JSONLoader();
         jsonLoader.setSource(input);
 

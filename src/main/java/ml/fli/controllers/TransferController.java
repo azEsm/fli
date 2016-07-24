@@ -1,28 +1,32 @@
 package ml.fli.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import ml.fli.models.*;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
+import ml.fli.models.User;
+import ml.fli.services.MockUsersServiceImpl;
+import ml.fli.services.UsersService;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.VkApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 @Controller
 public class TransferController {
 
+    @Autowired
+    private UsersService usersService;
+
     @MessageMapping("/get")
     @SendTo("/data/userList")
-    public FrontendResponse get() throws Exception {
-        //Thread.sleep(30000);
-        //String userId = message.getUserId();
-        //String choiceSex = message.getSex();
+    public FrontendResponse get(FrontendRequest message) throws Exception {
+        Thread.sleep(30000);
+/*        String userId = message.getUserId();
+        String choiceSex = message.getSex();
 
-        String userId = "132154659";
         VkApi vkApi = new VkApi();
         String resultOneUser = vkApi.getUser(userId);
 
@@ -42,16 +46,12 @@ public class TransferController {
 //            }
 //        }
 
-        String userUrl = "vk.com/id" + userId;
+/*        String userUrl = "vk.com/id" + userId;
         String userName = oneUser.getFirst_name() + " " + oneUser.getLast_name();
         String userPic = "https://pp.vk.me/c633221/v633221362/39410/MT0d_XiMpqs.jpg";
-        int userWeight = 10;
+        int userWeight = 10;*/
 
-        FrontendResponseOneUser result = new FrontendResponseOneUser(userUrl, userName, userPic, userWeight);
-        ArrayList<FrontendResponseOneUser> userList = new ArrayList<>();
-        userList.add(result);
-
-        return new FrontendResponse(userList);
+        return ((MockUsersServiceImpl) usersService).getSomeUsers();
     }
 
 }

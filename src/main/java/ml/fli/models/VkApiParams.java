@@ -21,7 +21,7 @@ public class VkApiParams {
     }
 
     public String getItem(String name) {
-        if (params.containsKey(name) == true) {
+        if (params.containsKey(name)) {
             for (Map.Entry entry : params.entrySet()) {
                 if (entry.getKey() == name)
                     return entry.getValue().toString();
