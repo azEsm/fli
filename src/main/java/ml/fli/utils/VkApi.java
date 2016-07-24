@@ -1,25 +1,17 @@
 package ml.fli.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import ml.fli.models.VkApiParams;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class VkApi {
 
-    private static final String API_VERSION = "5.2";
+    private static final String API_VERSION = "5.53";
     private static final String accessToken =
             "03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b";
 
@@ -35,8 +27,15 @@ public final class VkApi {
     }
     //Заполнение параметров для получения списка пользователя по заданным значениям
     public String getUsersList(VkApiParams param) throws IOException {
-        Params parameter = Params.create().add("count","10");
-        String value = param.getItem("city");
+        Params parameter = Params.create();
+        String value = param.getItem("count");
+        if (value != "") {
+            parameter.add("count", value);
+        }
+        else {
+            parameter.add("count", "1000");
+        }
+        value = param.getItem("city");
         if (value != "") {
             parameter.add("city", value);
         }

@@ -27,8 +27,8 @@ public class JSONParser {
         if (user.get("bdate") instanceof JsonElement) {
             userResult.setBdate(user.get("bdate").getAsString());
         }
-        if (user.get("city") instanceof JsonElement) {
-            userResult.setCity(user.get("city").getAsString());
+        if (user.getAsJsonObject("city") instanceof JsonObject) {
+            userResult.setCity(user.getAsJsonObject("city").get("id").getAsString());
         }
 
         return userResult;
@@ -50,8 +50,8 @@ public class JSONParser {
             if (user.get("bdate") instanceof JsonElement) {
                 oneUser.setBdate(user.get("bdate").getAsString());
             }
-            if (user.get("city") instanceof JsonElement) {
-                oneUser.setCity(user.get("city").getAsString());
+            if (user.getAsJsonObject("city") instanceof JsonObject) {
+                oneUser.setCity(user.getAsJsonObject("city").get("id").getAsString());
             }
             if (user.get("photo_400_orig") instanceof JsonElement) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());

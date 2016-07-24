@@ -1,9 +1,8 @@
 package ml.fli;
 
+
 import ml.fli.controllers.UsersController;
 import ml.fli.models.*;
-import ml.fli.services.MockUsersServiceImpl;
-import ml.fli.services.UsersService;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.JsonConverter;
 import ml.fli.utils.UsersConverter;
@@ -197,15 +196,19 @@ public class SimpleTest {
         }
 
     }
+
     @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
+        String userId = "5592362";
 
-        String resultOneUser = vkApi.getUser("5592362");
+        String resultOneUser = vkApi.getUser(userId);
+
         JSONParser parser = new JSONParser();
         User oneUser = parser.parseUser(resultOneUser);
         logger.info("\nResultUser:\n{}", oneUser.getId() + " " + oneUser.getFirst_name() + " "
-                + oneUser.getLast_name() + " " + oneUser.getSex() + " " + oneUser.getBdate());
+                + oneUser.getLast_name() + " " + oneUser.getSex() + " " + oneUser.getBdate() + " " + oneUser.getCity());
+        logger.info("\nResultOneUser:\n{}", resultOneUser);
 
         String resultGroup = vkApi.getUserGroups(132154659,10);
         logger.info("\nResultGroup:\n{}", resultGroup);
@@ -227,19 +230,11 @@ public class SimpleTest {
             }
         }
         param.add("sex", choiceSex);
+        param.add("count", "100");
         String resultUserList = vkApi.getUsersList(param);
         Set<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
-    }
-
-    private UsersService usersService;
-
-    @Test
-    public void getVkApi() throws Exception {
-        FrontendResponse result = ((MockUsersServiceImpl) usersService).getVkApi();
-        assertNotNull(result);
-        assertEquals(10, result.getResult().size());
     }
 
     @Test

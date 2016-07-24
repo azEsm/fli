@@ -19,8 +19,11 @@ public class TransferController {
     @SendTo("/data/userList")
     public FrontendResponse get(FrontendRequest message) throws Exception {
         Thread.sleep(30);
+        System.out.println("ssssssss");
+        System.out.println(message.getUserId());
+        System.out.println(message.getSex());
 
-        return ((MockUsersServiceImpl) usersService).getSomeUsers();
+        return ((MockUsersServiceImpl) usersService).getVkApi();
     }
 
 }

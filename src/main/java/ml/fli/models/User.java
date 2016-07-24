@@ -1,11 +1,6 @@
 package ml.fli.models;
 
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class User {
     private String id;
 
@@ -57,7 +52,7 @@ public class User {
         return city;
     }
 
-    public void setCity(String home_town) {
+    public void setCity(String city) {
         this.city = city;
     }
 
