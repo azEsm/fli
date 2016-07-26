@@ -1,6 +1,8 @@
 package ml.fli.models;
 
 
+import java.util.Set;
+
 public class User {
     private String id;
 
@@ -15,6 +17,10 @@ public class User {
     private String bdate;
 
     private String photo_400_orig;
+
+    private Set<String> audio;
+
+    private Set<String> groups;
 
     public String getId() {
         return id;
@@ -70,6 +76,22 @@ public class User {
 
     public void setPhoto_400_orig(String photo_400_orig) {
         this.photo_400_orig = photo_400_orig;
+    }
+
+    public Set<String> getAudio() {
+        return audio;
+    }
+
+    public void setAudio(Set<String> audio) {
+        this.audio = audio;
+    }
+
+    public Set<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<String> groups) {
+        this.groups = groups;
     }
 
     /*    public String toString() {

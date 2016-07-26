@@ -63,6 +63,10 @@ public final class VkApi {
                 .add("count", String.valueOf(count))
                 .add("user_id", String.valueOf(userId)));
     }
+    //Вызов хранимой процедуры для получения 12 пользователей с аудиозаписями и группами
+    public String executeUsers() throws IOException {
+        return invokeApi("execute.GetUsers", Params.create());
+    }
 
     private String invokeApi(String method, Params params) throws IOException {
         final String parameters = (params == null) ? "" : params.build();
