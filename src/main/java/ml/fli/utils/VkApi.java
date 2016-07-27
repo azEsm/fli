@@ -1,5 +1,6 @@
 package ml.fli.utils;
 
+
 import ml.fli.models.VkApiParams;
 
 import java.io.BufferedReader;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 
 public final class VkApi {
 
-    private static final String API_VERSION = "5.53";
+    private static final String API_VERSION = "5.2";
     private static final String accessToken =
             "03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b";
 
@@ -27,15 +28,8 @@ public final class VkApi {
     }
     //Заполнение параметров для получения списка пользователя по заданным значениям
     public String getUsersList(VkApiParams param) throws IOException {
-        Params parameter = Params.create();
-        String value = param.getItem("count");
-        if (value != "") {
-            parameter.add("count", value);
-        }
-        else {
-            parameter.add("count", "1000");
-        }
-        value = param.getItem("city");
+        Params parameter = Params.create().add("count", "100");
+        String value = param.getItem("city");
         if (value != "") {
             parameter.add("city", value);
         }

@@ -5,13 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 import ml.fli.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
 
 public class JSONParser {
 
@@ -30,8 +27,8 @@ public class JSONParser {
         if (user.get("bdate") instanceof JsonElement) {
             userResult.setBdate(user.get("bdate").getAsString());
         }
-        if (user.getAsJsonObject("city") instanceof JsonObject) {
-            userResult.setCity(user.getAsJsonObject("city").get("id").getAsString());
+        if (user.get("city") instanceof JsonElement) {
+            userResult.setCity(user.get("city").getAsString());
         }
 
         return userResult;
@@ -39,8 +36,6 @@ public class JSONParser {
 
     public List<User> parseUsers(String vkApiListUsers) {
         List<User> listUsers = new ArrayList<>();
-    public Set<User> parseUsers(String vkApiListUsers) {
-        Set<User> listUsers = new HashSet<>();
 
         JsonElement element = parser.parse(vkApiListUsers);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
@@ -55,8 +50,8 @@ public class JSONParser {
             if (user.get("bdate") instanceof JsonElement) {
                 oneUser.setBdate(user.get("bdate").getAsString());
             }
-            if (user.getAsJsonObject("city") instanceof JsonObject) {
-                oneUser.setCity(user.getAsJsonObject("city").get("id").getAsString());
+            if (user.get("city") instanceof JsonElement) {
+                oneUser.setCity(user.get("city").getAsString());
             }
             if (user.get("photo_400_orig") instanceof JsonElement) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
