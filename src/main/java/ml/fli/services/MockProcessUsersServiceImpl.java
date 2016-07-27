@@ -1,8 +1,8 @@
 package ml.fli.services;
 
+import ml.fli.db.models.User;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
-import ml.fli.models.User;
 import ml.fli.models.VkApiParams;
 import ml.fli.utils.Errors;
 import ml.fli.utils.JSONParser;
