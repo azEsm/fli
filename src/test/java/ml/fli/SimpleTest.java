@@ -199,19 +199,20 @@ public class SimpleTest {
 
     @Test
     public void vkApiExecuteTest() throws Exception{
-//        String request = "https://api.vk.com/method/execute.GetUsers" +
-//                "?access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
+        String request = "https://api.vk.com/method/execute.GetUsers" +
+                "?access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
+
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(request,String.class);
+        logger.info("\nResult:\n{}", result);
+
+//        VkApi vkApi = new VkApi();
+//        String vkApiExecute = vkApi.executeUsers();
+//        logger.info("\nUsersList:\n{}", vkApiExecute);
 //
-//        RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(request,String.class);
-//        logger.info("\nResult:\n{}", result);
-
-        VkApi vkApi = new VkApi();
-        String vkApiExecute = vkApi.executeUsers();
-
-        JSONParser parser = new JSONParser();
-        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
-        logger.info("\nResult:\n{}", userList.size());
+//        JSONParser parser = new JSONParser();
+//        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
+//        logger.info("\nResult:\n{}", userList.size());
     }
 
     @Test
