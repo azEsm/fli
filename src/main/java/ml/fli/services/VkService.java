@@ -39,4 +39,11 @@ public interface VkService {
      * @return
      */
     String executeUsers();
+
+    /**
+     * Вызов хранимой процедуры для получения 12 пользователей с аудиозаписями и группами
+     * @param listId
+     * @return
+     */
+    String executeAudioAndGroup(String listId);
 }

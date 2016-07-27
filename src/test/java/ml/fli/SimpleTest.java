@@ -202,19 +202,33 @@ public class SimpleTest {
     }
 
     @Test
-    public void vkApiExecuteTest() throws Exception{
-//        String request = "https://api.vk.com/method/execute.GetUsers" +
-//                "?access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
+    public void vkApiExecuteTest() throws Exception {
+        String listId = "90601787,63596945,7708047,1545367,32048608,5273940,4501721,64129056,61245909,113393454,52014407,11329613";
+        String vkApiResult = vkApi.executeAudioAndGroup(listId);
+        logger.info("\nResult:\n{}", vkApiResult);
+    }
+
+    @Test
+    public void parserExecute() throws Exception {
+//        String request = "https://api.vk.com/method/execute.GetAudioAndGroup" +
+//                "?user=2683946,3925445,182200279,98506897,161060811,421848,102544966,6773527,11100369,1420471,68143899,66437505" +
+//                "&access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
 //
 //        RestTemplate restTemplate = new RestTemplate();
 //        String result = restTemplate.getForObject(request,String.class);
 //        logger.info("\nResult:\n{}", result);
 
-        String vkApiExecute = vkApi.executeUsers();
-
+//        String listId = "2683946,3925445,182200279,98506897,161060811,421848,102544966,6773527,11100369,1420471,68143899,66437505";
         JSONParser parser = new JSONParser();
-        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
-        logger.info("\nResult:\n{}", userList.size());
+
+        VkApiParams param = VkApiParams.create().add("count", "24");
+        String vkApiExecute = vkApi.getUsersList(param);
+
+        Set<User> usersList = parser.parseUsers(vkApiExecute);
+        logger.info("\nResult:\n{}", usersList.size());
+//        JSONParser parser = new JSONParser();
+//        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
+//        logger.info("\nResult:\n{}", vkApiExecute);
     }
 
     @Test

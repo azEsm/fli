@@ -81,6 +81,10 @@ public final class VkServiceImpl implements VkService {
         return invokeApi("execute.GetUsers", Params.create());
     }
 
+    public String executeAudioAndGroup(String listId) {
+        return invokeApi("execute.GetAudioAndGroup", Params.create().add("user", listId));
+    }
+
     private String invokeApi(String method, Params params) {
         final String parameters = (params == null) ? "" : params.build();
         String reqUrl = API_REQUEST
