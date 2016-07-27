@@ -1,5 +1,7 @@
 package ml.fli.models;
 
+import java.util.Set;
+
 public class User {
     private int id;
 
@@ -14,6 +16,26 @@ public class User {
     private String bdate;
 
     private String photo_400_orig;
+
+    private Set<String> user_audio;
+
+    private Set<String> user_group;
+
+    public Set<String> getUser_audio() {
+        return user_audio;
+    }
+
+    public void setUser_audio(Set<String> user_audio) {
+        this.user_audio = user_audio;
+    }
+
+    public Set<String> getUser_group() {
+        return user_group;
+    }
+
+    public void setUser_group(Set<String> uer_group) {
+        this.user_group = uer_group;
+    }
 
     public int getId() {
         return id;
