@@ -1,5 +1,6 @@
 package ml.fli.utils;
 
+import com.google.common.base.Strings;
 import ml.fli.models.VkApiParams;
 
 import java.io.BufferedReader;
@@ -28,25 +29,25 @@ public final class VkApi {
     //Заполнение параметров для получения списка пользователя по заданным значениям
     public String getUsersList(VkApiParams param) throws IOException {
         Params parameter = Params.create();
-        String value = param.getItem("count");
-        if (value != "") {
-            parameter.add("count", value);
+        String count = param.getItem("count");
+        if (!Strings.isNullOrEmpty(count)) {
+            parameter.add("count", count);
         }
         else {
             parameter.add("count", "1000");
         }
-        value = param.getItem("city");
-        if (value != "") {
-            parameter.add("city", value);
+        String city = param.getItem("city");
+        if (!Strings.isNullOrEmpty(city)) {
+            parameter.add("city", city);
         }
-        value = param.getItem("sex");
-        if (value != "") {
-            parameter.add("sex", value);
+        String sex = param.getItem("sex");
+        if (!Strings.isNullOrEmpty(sex)) {
+            parameter.add("sex", sex);
         }
-        value = param.getItem("age");
-        if (value != "") {
-            parameter.add("age_from", String.valueOf(Integer.valueOf(value) - 5));
-            parameter.add("age_to", String.valueOf(Integer.valueOf(value) + 5));
+        String age = param.getItem("age");
+        if (!Strings.isNullOrEmpty(age)) {
+            parameter.add("age_from", String.valueOf(Integer.valueOf(age) - 5));
+            parameter.add("age_to", String.valueOf(Integer.valueOf(age) + 5));
         }
         parameter.add("fields", "sex,bdate,city,photo_400_orig");
         return invokeApi("users.search", parameter);
@@ -57,12 +58,14 @@ public final class VkApi {
                 .add("count", String.valueOf(count))
                 .add("owner_id", String.valueOf(userId)));
     }
+
     //Заполнение параметров для получения списка групп пользователя по id
     public String getUserGroups(int userId, int count) throws IOException {
         return invokeApi("groups.get", Params.create()
                 .add("count", String.valueOf(count))
                 .add("user_id", String.valueOf(userId)));
     }
+
     //Вызов хранимой процедуры для получения 12 пользователей с аудиозаписями и группами
     public String executeUsers() throws IOException {
         return invokeApi("execute.GetUsers", Params.create());
@@ -86,19 +89,13 @@ public final class VkApi {
         return result.toString();
     }
 
-/*    private static String invokeApi(String requestUrl) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(requestUrl,String.class);
-        return result;
-    }*/
-
     private static class Params {
+
+        private final HashMap<String, String> params;
 
         public static Params create() {
             return new Params();
         }
-
-        private final HashMap<String, String> params;
 
         private Params() {
             params = new HashMap<>();
@@ -108,13 +105,15 @@ public final class VkApi {
             params.put(key, value);
             return this;
         }
+
         //Конструирование строки запроса
         public String build() {
             if (params.isEmpty()) return "";
+
             final StringBuilder result = new StringBuilder();
-            params.keySet().stream().forEach(key -> {
-                result.append(key).append('=').append(params.get(key)).append('&');
-            });
+            params.keySet().forEach(key ->
+                result.append(key).append('=').append(params.get(key)).append('&')
+            );
             return result.toString();
         }
     }
