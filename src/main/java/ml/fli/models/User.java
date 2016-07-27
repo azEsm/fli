@@ -1,10 +1,16 @@
-package ml.fli.models;
+package ml.fli.db.models;
 
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Set;
 
+@Entity
 public class User {
-    private String id;
+    @Id
+    private long id;
 
     private String first_name;
 
@@ -18,15 +24,19 @@ public class User {
 
     private String photo_400_orig;
 
+    @ElementCollection
+    @CollectionTable(name = "audios")
     private Set<String> audio;
 
+    @ElementCollection
+    @CollectionTable(name = "groups")
     private Set<String> groups;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -104,7 +114,7 @@ public class User {
 
     }
 
-    public User(String id, String first_name, String last_name, String sex, String bdate, String city) {
+    public User(long id, String first_name, String last_name, String sex, String bdate, String city) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;

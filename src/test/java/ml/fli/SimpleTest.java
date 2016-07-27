@@ -315,7 +315,7 @@ public class SimpleTest {
 
     private Set<User> buildUsers() {
         User user = new User();
-        user.setId("123");
+        user.setId(123);
         user.setFirst_name("Иван");
         user.setLast_name("Петров");
         user.setCity("456");
