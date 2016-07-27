@@ -1,13 +1,11 @@
 package ml.fli.models;
 
+import ml.fli.models.weka.VKAudio;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import java.util.List;
 
 public class User {
-    private String id;
+    private int id;
 
     private String first_name;
 
@@ -21,23 +19,24 @@ public class User {
 
     private String photo_400_orig;
 
-    private Set<String> user_audio;
+    private List<VKAudio> user_audio;
 
-    private Set<String> user_group;
+    private List<String> user_group;
 
-    public Set<String> getUser_audio() {
+    //region Getter/setter
+    public List<VKAudio> getUser_audio() {
         return user_audio;
     }
 
-    public void setUser_audio(Set<String> user_audio) {
+    public void setUser_audio(List<VKAudio> user_audio) {
         this.user_audio = user_audio;
     }
 
-    public Set<String> getUser_group() {
+    public List<String> getUser_group() {
         return user_group;
     }
 
-    public void setUser_group(Set<String> uer_group) {
+    public void setUser_group(List<String> uer_group) {
         this.user_group = uer_group;
     }
 
@@ -102,6 +101,7 @@ public class User {
             + "; home_town = " + city + "]"
             + "bdate = " + bdate;
     }*/
+    //endregion
 
     public User() {
 

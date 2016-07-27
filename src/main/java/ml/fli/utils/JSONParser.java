@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ml.fli.models.User;
+import ml.fli.models.weka.VKAudio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,5 +61,38 @@ public class JSONParser {
         }
 
         return listUsers;
+    }
+
+    public List<VKAudio> parseAudio(String vkApiListAudio)
+    {
+        List<VKAudio>  ListAudios = new ArrayList<>();
+
+        JsonElement element = parser.parse(vkApiListAudio);
+        JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
+        JsonArray items = response.getAsJsonArray("items");
+        for (int i = 0; i < items.size(); i++) {
+            JsonObject jsonAudio = items.get(i).getAsJsonObject();
+            VKAudio audio = new VKAudio( jsonAudio.get("artist").getAsString(),
+                    jsonAudio.get("title").getAsString());
+
+            ListAudios.add(audio);
+        }
+
+        return ListAudios;
+    }
+
+    public List<String> parseVKGroups(String vkApiListGroups)
+    {
+        List<String>  listGroups = new ArrayList<>();
+
+        JsonElement element = parser.parse(vkApiListGroups);
+        JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
+        JsonArray items = response.getAsJsonArray("items");
+        for (int i = 0; i < items.size(); i++) {
+            String group = items.get(i).getAsString();
+            listGroups.add(group);
+        }
+
+        return listGroups;
     }
 }

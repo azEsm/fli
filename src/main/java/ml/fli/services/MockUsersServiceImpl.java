@@ -9,6 +9,7 @@ import ml.fli.utils.VkApi;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -60,8 +61,8 @@ public class MockUsersServiceImpl implements UsersService {
         JSONParser parser = new JSONParser();
         try {
             String Users = vkApi.getUsersList(param);
-            
-            Set<User> vkApiresult = parser.parseUsers(Users);
+
+            List<User> vkApiresult = parser.parseUsers(Users);
 
             Set<FrontendResponse.Raw> raws = result.getResult();
 
