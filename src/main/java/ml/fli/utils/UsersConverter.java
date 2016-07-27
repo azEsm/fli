@@ -2,7 +2,7 @@ package ml.fli.utils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.google.common.base.Strings;
-import ml.fli.models.User;
+import ml.fli.db.models.User;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.Loader;

@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ml.fli.models.User;
+import ml.fli.db.models.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,14 +20,14 @@ public class JSONParser {
         JsonElement element = parser.parse(vkApiUser);
         JsonArray response = element.getAsJsonObject().getAsJsonArray("response");
         JsonObject user = response.get(0).getAsJsonObject();
-        userResult.setId(user.get("id").getAsString());
+        userResult.setId(user.get("id").getAsLong());
         userResult.setFirst_name(user.get("first_name").getAsString());
         userResult.setLast_name(user.get("last_name").getAsString());
         userResult.setSex(user.get("sex").getAsString());
-        if (user.get("bdate") instanceof JsonElement) {
+        if (user.get("bdate") != null) {
             userResult.setBdate(user.get("bdate").getAsString());
         }
-        if (user.getAsJsonObject("city") instanceof JsonObject) {
+        if (user.getAsJsonObject("city") != null) {
             userResult.setCity(user.getAsJsonObject("city").get("id").getAsString());
         }
 
@@ -43,17 +43,17 @@ public class JSONParser {
         for (int i = 0; i < items.size(); i++) {
             User oneUser = new User();
             JsonObject user = items.get(i).getAsJsonObject();
-            oneUser.setId(user.get("id").getAsString());
+            oneUser.setId(user.get("id").getAsLong());
             oneUser.setFirst_name(user.get("first_name").getAsString());
             oneUser.setLast_name(user.get("last_name").getAsString());
             oneUser.setSex(user.get("sex").getAsString());
-            if (user.get("bdate") instanceof JsonElement) {
+            if (user.get("bdate") != null) {
                 oneUser.setBdate(user.get("bdate").getAsString());
             }
-            if (user.getAsJsonObject("city") instanceof JsonObject) {
+            if (user.getAsJsonObject("city") != null) {
                 oneUser.setCity(user.getAsJsonObject("city").get("id").getAsString());
             }
-            if (user.get("photo_400_orig") instanceof JsonElement) {
+            if (user.get("photo_400_orig") != null) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
             }
             listUsers.add(oneUser);
@@ -72,17 +72,17 @@ public class JSONParser {
             User oneUser = new User();
             JsonObject object = response.get(0).getAsJsonObject();
             JsonObject user = object.getAsJsonObject("user");
-            oneUser.setId(user.get("id").getAsString());
+            oneUser.setId(user.get("id").getAsLong());
             oneUser.setFirst_name(user.get("first_name").getAsString());
             oneUser.setLast_name(user.get("last_name").getAsString());
             oneUser.setSex(user.get("sex").getAsString());
-            if (user.get("bdate") instanceof JsonElement) {
+            if (user.get("bdate") != null) {
                 oneUser.setBdate(user.get("bdate").getAsString());
             }
-            if (user.getAsJsonObject("city") instanceof JsonObject) {
+            if (user.getAsJsonObject("city") != null) {
                 oneUser.setCity(user.getAsJsonObject("city").get("id").getAsString());
             }
-            if (user.get("photo_400_orig") instanceof JsonElement) {
+            if (user.get("photo_400_orig") != null) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
             }
             if (object.get("audio").isJsonObject()) {

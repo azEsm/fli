@@ -3,10 +3,10 @@ package ml.fli;
 
 import com.google.common.base.Strings;
 import ml.fli.controllers.UsersController;
+import ml.fli.db.models.User;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
 import ml.fli.models.Response;
-import ml.fli.models.User;
 import ml.fli.models.VkApiParams;
 import ml.fli.services.VkService;
 import ml.fli.utils.JSONParser;
