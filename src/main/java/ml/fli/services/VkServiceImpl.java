@@ -3,6 +3,7 @@ package ml.fli.services;
 import com.google.common.base.Strings;
 import ml.fli.models.VkApiParams;
 import ml.fli.utils.Errors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -11,9 +12,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Service
 public final class VkServiceImpl implements VkService {
+
+    @Autowired
+    ScheduledExecutorService executorService;
 
     private static final String API_VERSION = "5.53";
     private static final String accessToken =
