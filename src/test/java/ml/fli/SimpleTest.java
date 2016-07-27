@@ -1,12 +1,17 @@
 package ml.fli;
 
 
+import com.google.common.base.Strings;
 import ml.fli.controllers.UsersController;
-import ml.fli.models.*;
+import ml.fli.models.FrontendRequest;
+import ml.fli.models.FrontendResponse;
+import ml.fli.models.Response;
+import ml.fli.models.User;
+import ml.fli.models.VkApiParams;
+import ml.fli.services.VkService;
 import ml.fli.utils.JSONParser;
 import ml.fli.utils.JsonConverter;
 import ml.fli.utils.UsersConverter;
-import ml.fli.utils.VkApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -48,6 +53,9 @@ public class SimpleTest {
 
     @Autowired
     private UsersController usersController;
+
+    @Autowired
+    VkService vkApi;
 
     @Test
     public void dummyTest() throws Exception {
@@ -199,25 +207,22 @@ public class SimpleTest {
 
     @Test
     public void vkApiExecuteTest() throws Exception{
-        String request = "https://api.vk.com/method/execute.GetUsers" +
-                "?access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
-
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(request,String.class);
-        logger.info("\nResult:\n{}", result);
-
-//        VkApi vkApi = new VkApi();
-//        String vkApiExecute = vkApi.executeUsers();
-//        logger.info("\nUsersList:\n{}", vkApiExecute);
+//        String request = "https://api.vk.com/method/execute.GetUsers" +
+//                "?access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
 //
-//        JSONParser parser = new JSONParser();
-//        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
-//        logger.info("\nResult:\n{}", userList.size());
+//        RestTemplate restTemplate = new RestTemplate();
+//        String result = restTemplate.getForObject(request,String.class);
+//        logger.info("\nResult:\n{}", result);
+
+        String vkApiExecute = vkApi.executeUsers();
+
+        JSONParser parser = new JSONParser();
+        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
+        logger.info("\nResult:\n{}", userList.size());
     }
 
     @Test
     public void vkApiTest() throws Exception {
-        VkApi vkApi = new VkApi();
         String userId = "5592362";
 
         String resultOneUser = vkApi.getUser(userId);
@@ -235,10 +240,10 @@ public class SimpleTest {
 
         String choiceSex = "1";
         VkApiParams param = VkApiParams.create();
-        if (oneUser.getCity() instanceof String) {
+        if (!Strings.isNullOrEmpty(oneUser.getCity())) {
             param.add("city", oneUser.getCity());
         }
-        if (oneUser.getBdate() instanceof String) {
+        if (!Strings.isNullOrEmpty(oneUser.getBdate())) {
             String year = oneUser.getBdate();
             if (year.length() > 5) {
                 Calendar calendar = Calendar.getInstance();
