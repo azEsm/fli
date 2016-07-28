@@ -1,15 +1,14 @@
 package ml.fli.db.models;
 
-
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+//import javax.persistence.CollectionTable;
+//import javax.persistence.ElementCollection;
+//import javax.persistence.Entity;
+//import javax.persistence.Id;
 import java.util.Set;
 
-@Entity
+//@Entity
 public class User {
-    @Id
+//    @Id
     private long id;
 
     private String first_name;
@@ -24,12 +23,12 @@ public class User {
 
     private String photo_400_orig;
 
-    @ElementCollection
-    @CollectionTable(name = "audios")
+//    @ElementCollection
+//    @CollectionTable(name = "audios")
     private Set<String> audio;
 
-    @ElementCollection
-    @CollectionTable(name = "groups")
+//    @ElementCollection
+//    @CollectionTable(name = "groups")
     private Set<String> groups;
 
     public long getId() {
