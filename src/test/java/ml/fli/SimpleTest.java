@@ -202,13 +202,7 @@ public class SimpleTest {
         String resultOneUser = vkApi.getUser(searchingUserId);
         JSONParser parser = new JSONParser();
         User oneUser = parser.parseUser(resultOneUser);
-        String userAudio = vkApi.getUserAudios(7272824, 20);
-        List<VKAudio> audios = parser.parseAudio(userAudio);
-        String userGroup = vkApi.getUserGroups(7272824, 20);
-        List<String> groups = parser.parseVKGroups(userGroup);
 
-        oneUser.setUser_audio(audios);
-        oneUser.setUser_group(groups);
 
         String choiceSex = "2"; //TODO sexEnum
         VkApiParams param = VkApiParams.create();
@@ -227,6 +221,8 @@ public class SimpleTest {
         //param.add("sex", choiceSex);
         String resultUserList = vkApi.getUsersList(param);
         List<User> listUsers = parser.parseUsers(resultUserList);
+        listUsers.add(oneUser);
+
         for (User user:listUsers)
         {
             List<VKAudio> userAudiosList = new ArrayList<>();
@@ -250,97 +246,14 @@ public class SimpleTest {
             user.setUser_audio(userAudiosList);
             user.setUser_group(userGroupsList);
         }
-        listUsers.add(oneUser);
 
-        // clusterer evaluation
         Instances dataSet = UsersConverter.usersToInstances(new HashSet<User>(listUsers));
-        //StringToWordVector filter = getVectorizer();
 
-        StringToWordVector filter = new StringToWordVector();
-        //filter.setAttributeIndicesArray(new int[]{1, 2, 3, 4, 5});
-        filter.setInputFormat(dataSet);
-        filter.setIDFTransform(true);
-        filter.setTFTransform(true);
+        Klusterer cluster = new Klusterer();
+        Set<Instance> result = cluster.FindCluster(dataSet, Integer.parseInt(searchingUserId));
 
-        Instances dataFiltered = Filter.useFilter(dataSet, filter);
-
-        Instance tmp = dataFiltered.instance(0);
-        //System.out.println(tmp);
-        int tmpID = (int)tmp.value(0);
-
-        double error = 0.0;
-        int numClusters = 2;
-        //that's how we roll!
-
-        Random rnd = new Random();
-        int randomAccuracy = rnd.nextInt((5 - 3) + 1) + 3; // 3-5
-        while (true) {
-            SimpleKMeans clusterer = new SimpleKMeans();
-            clusterer.setNumClusters(numClusters);
-
-            clusterer.buildClusterer(dataFiltered);
-
-            double thisError = clusterer.getSquaredError();
-            if (numClusters == 2) {
-                error = thisError;
-                numClusters++;
-                continue;
-            }
-
-            System.out.println("current n:" + numClusters);
-            System.out.println("Current error: " + thisError);
-            System.out.println("Cluster sizes");
-            double[] arr = clusterer.getClusterSizes();
-            for (int i = 0; i <= arr.length - 1; i++) {
-                System.out.println("\tCluster #" + Integer.toString(i) + ":" + Double.toString(arr[i]));
-            }
-            double errorDiff = error - thisError;
-            System.out.println("Error diff: " + errorDiff);
-
-            if (numClusters== 13) {
-                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                //find cluster with searced user
-                int searchedClustererIndex = 0;
-                for (Instance user : dataFiltered) {
-                    if ( (int)user.value(0) == Integer.parseInt(searchingUserId)) {
-                        searchedClustererIndex = clusterer.clusterInstance(user);
-                    }
-                }
-
-                List<Integer> findedUSers = new ArrayList<Integer>();
-
-                for (Instance instance : dataFiltered) {
-                    if (clusterer.clusterInstance(instance) == searchedClustererIndex) {
-                        findedUSers.add((int)instance.value(0));
-                    }
-                }
-
-                Set<Instance> thisData = new HashSet<Instance>();
-
-                for (Instance inst: dataSet)
-                {
-                    for(Integer id: findedUSers)
-                    {
-                        if (( (int)inst.value(0)) == id)
-                        {
-                            thisData.add(inst);
-                        }
-                    }
-                }
-
-                System.out.println("Searched Clusterer is clusterer #" + searchedClustererIndex);
-                for(Instance inst: thisData )
-                    {
-                        System.out.println(inst);
-                    }
-                break;
-            }
-            numClusters++;
-            error = thisError;
-            if (numClusters >= listUsers.size())
-                break;
-        }
-
+        for (Instance inst: result)
+            System.out.println(inst);
     }
 
     @Test

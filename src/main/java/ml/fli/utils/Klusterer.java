@@ -53,7 +53,7 @@ public class Klusterer {
             }
         }
 
-        //собираем все объекты из искомо кластера ( над кластером tf-idf)
+        //собираем все объекты из искомого кластера ( над кластером tf-idf)
         Set<Integer> findedUsers = new HashSet<Integer>();
         for (Instance instance : data) {
             if (clusterer.clusterInstance(instance) == searchedClustererIndex) {
@@ -62,7 +62,7 @@ public class Klusterer {
         }
 
         //ищем соответствующие записи в ИСХОДНЫХ ДАННЫХ
-        Set<Instance> thisData = new HashSet<Instance>();
+        Set<Instance> thisData = new HashSet<>();
         for (Instance inst: dataBackup)
         {
             for(Integer id: findedUsers)

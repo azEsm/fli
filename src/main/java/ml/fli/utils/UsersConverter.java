@@ -25,20 +25,8 @@ public class UsersConverter {
         Attribute sex = new Attribute("Sex", (ArrayList<String>) null);
         Attribute city = new Attribute("Home_town", (ArrayList<String>) null);
         Attribute bdate = new Attribute("Bdate", (ArrayList<String>) null);
-
-        ArrayList<Attribute> audioAttributes = new ArrayList<>();
-        Attribute artist = new Attribute("Artist", (ArrayList<String>) null);
-        Attribute track = new Attribute("Track", (ArrayList<String>) null);
-        audioAttributes.add(artist);
-        audioAttributes.add(track);
-        Instances audios = new Instances("Audios", audioAttributes, 0);
-        Attribute audios_relation = new Attribute("Audios", audios);
-
-        ArrayList<Attribute> groupAttributes = new ArrayList<>();
-        Attribute groupAtt = new Attribute("Group", (ArrayList<String>) null);
-        groupAttributes.add(groupAtt);
-        Instances groups = new Instances("Groups", groupAttributes, 0);
-        Attribute groups_relation = new Attribute("Groups", audios);
+        Attribute audios = new Attribute("Audios", (ArrayList<String>) null);
+        Attribute groups = new Attribute("Groups", (ArrayList<String>) null);
 
         attributesList.add(id);
         attributesList.add(first_name);
@@ -46,14 +34,19 @@ public class UsersConverter {
         attributesList.add(sex);
         attributesList.add(city);
         attributesList.add(bdate);
-        attributesList.add(audios_relation);
-       // attributesList.add(groups_relation);
+        attributesList.add(audios);
+        attributesList.add(groups);
 
         Instances dataSet = new Instances("Users", attributesList, 0);
         //FIXME расставить веса
         dataSet.attribute("Id").setWeight(0.0);
         dataSet.attribute("Last_name").setWeight(0.0);
         dataSet.attribute("First_name").setWeight(0.0);
+        dataSet.attribute("Sex").setWeight(0.5);
+        dataSet.attribute("Audios").setWeight(0.7);
+        dataSet.attribute("Groups").setWeight(0.9);
+        dataSet.attribute("Home_town").setWeight(0.4);
+        dataSet.attribute("Bdate").setWeight(0.2);
         // cast to instances
 
         for (User user : users) {
@@ -66,24 +59,19 @@ public class UsersConverter {
             values[4] = dataSet.attribute(4).addStringValue((user.getCity() != null) ? user.getCity() : "");
             values[5] = dataSet.attribute(5).addStringValue((user.getBdate() != null) ? user.getBdate() : "");
 
-            for (VKAudio audio: user.getUser_audio())
+            String audio = "";
+            for (VKAudio vkaudio: user.getUser_audio())
             {
-                double[] audioValues = new double[audios.numAttributes()];
-                audioValues[0] = audios.attribute(0).addStringValue(audio.getArtist());
-                audioValues[1] = audios.attribute(1).addStringValue(audio.getTrack());
-                Instance instance = new DenseInstance(1.0, audioValues);
-                audios.add(instance);
+                audio += vkaudio.toString() + ",";
             }
-            values[6] = dataSet.attribute(6).addRelation(audios);
+            values[6] = dataSet.attribute(6).addStringValue(audio);
 
-            for (String group: user.getUser_group())
+            String group = "";
+            for (String vkgroup: user.getUser_group())
             {
-                double[] groupValues = new double[groups.numAttributes()];
-                groupValues[0] = groups.attribute(0).addStringValue(group);
-                Instance instance = new DenseInstance(1.0, groupValues);
-                groups.add(instance);
+                group += vkgroup.toString() + ",";
             }
-           // values[7] = dataSet.attribute(7).addRelation(groups);
+            values[7] = dataSet.attribute(7).addStringValue(group);
 
             Instance instance = new DenseInstance(1.0, values);
             dataSet.add(instance);

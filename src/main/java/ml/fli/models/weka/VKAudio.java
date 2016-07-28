@@ -20,6 +20,6 @@ public class VKAudio {
 
     @Override
     public String toString() {
-        return "Artist: " + this.artist + ", Track: " + this.track;
+        return this.artist + ":" + this.track;
     }
 }
