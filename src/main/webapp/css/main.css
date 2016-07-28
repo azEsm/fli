@@ -208,6 +208,7 @@ button:focus {
 	box-shadow: 0 0 30px rgba(230, 57, 70, .7);
 	transform: scale(1);
 	transition: transform .4s, box-shadow .4s;
+
 }
 
 .get-result__button:hover {
@@ -285,6 +286,10 @@ button:focus {
 .user__desc:hover .user__massege { opacity: 1; }
 .user__desc:hover .user__title {
 	font-size: 32px;
+}
+
+#button{
+	visibility: hidden;
 }
 
 /* /act 3 */

@@ -1,16 +1,18 @@
 ﻿<!DOCTYPE HTML>
-<html ng-app>
+<html ng-app="fliApp">
 <head>
 	<meta charset="UTF-8">
 	<title>FLi</title>
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/font.css">
-	<link rel="stylesheet" href="css/ie11.css">
+	<script src="js/sockjs-0.3.4.js"></script>
+	<script src="js/stomp.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+	<script src="js/js.js" ></script>
 	<link rel="stylesheet" href="css/media.css">
-	<script src="js/main.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
 </head>
-<body>
+<body onload="connect()">
 
 	<header class="header">
 		<img width="135" height="135" src="images/logo.png" alt="Fli" class="logo">
@@ -31,7 +33,7 @@
 				<span>Пол: </span>
 				<select name="" id="sex">
 					<option value="0">без разницы</option>
-					<option value="1">муржской</option>
+					<option value="1">мужской</option>
 					<option value="2">женский</option>
 				</select>
 			</div>
@@ -57,7 +59,7 @@
 				Поиск друзей займёт у нас некоторое время. Пока вы ждёте можите поиграть в игру ниже.
 			</p>
 			<form class="get-result" action="">
-				<button class="button get-result__button" ng-model="off" ng-init="off=false"  ng-click="off=true" >проверить результат!</button>
+				<button id="button" class="button get-result__button"  ng-model="off" ng-init="off=false"  ng-click="off=true"  >проверить результат!</button>
 			</form>
 			<canvas class="game"></canvas>
 		</div>
@@ -66,71 +68,19 @@
 
 
 	<!-- ACT 3 -->
-	<main class="content" ng-show="off">
+	<main class="content"  ng-show="off" >
 		<p class="block-info block-info_massege">
 			Мы нашли для вас друзей!
 		</p>
-		<div class="search-result">
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image1">
-				</div>
-				<a href="" class="user__desc" id="userUrl1">
-					<span class="user__title" id="name1"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
+		<div class="search-result" id="usersDiv">
 
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image2">
-				</div>
-				<a href="" class="user__desc" id="userUrl2">
-					<span class="user__title" id="name2"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
 
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image3">
-				</div>
-				<a href="" class="user__desc" id="userUrl3">
-					<span class="user__title" id="name3"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
-
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image4">
-				</div>
-				<a href="" class="user__desc" id="userUrl4">
-					<span class="user__title" id="name4"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image5">
-				</div>
-				<a href="" class="user__desc" id="userUrl5">
-					<span class="user__title" id="name5"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
-			<div class="user">
-				<div class="user__inner-ava">
-					<img src="" width="300" height="300" alt="" id="image6">
-				</div>
-				<a href="" class="user__desc" id="userUrl6">
-					<span class="user__title" id="name6"></span>
-					<span class="user__massege" >Посетить страницу в VK!</span>
-				</a>
-			</div>
 		</div>
 	</main>
 	<!-- /ACT 3 -->
+
+
+
 
 </body>
 </html>

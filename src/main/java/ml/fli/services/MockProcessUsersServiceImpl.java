@@ -59,7 +59,7 @@ public class MockProcessUsersServiceImpl implements ProcessUsersService {
 
     public FrontendResponse getVkApi() {
         FrontendResponse result = new FrontendResponse();
-        VkApiParams param = VkApiParams.create();
+        VkApiParams param = VkApiParams.create().add("count","12");
         JSONParser parser = new JSONParser();
         try {
             String Users = vkApi.getUsersList(param);
