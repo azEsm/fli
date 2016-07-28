@@ -23,6 +23,20 @@ public class User {
 
     private String photo_400_orig;
 
+    private String about;
+
+    private String activities;
+
+    private String books;
+
+    private String games;
+
+    private String interests;
+
+    private String movies;
+
+    private String music;
+
 //    @ElementCollection
 //    @CollectionTable(name = "audios")
     private Set<String> audio;
@@ -101,6 +115,62 @@ public class User {
 
     public void setGroups(Set<String> groups) {
         this.groups = groups;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getActivities() {
+        return activities;
+    }
+
+    public void setActivities(String activities) {
+        this.activities = activities;
+    }
+
+    public String getBooks() {
+        return books;
+    }
+
+    public void setBooks(String books) {
+        this.books = books;
+    }
+
+    public String getGames() {
+        return games;
+    }
+
+    public void setGames(String games) {
+        this.games = games;
+    }
+
+    public String getInterests() {
+        return interests;
+    }
+
+    public void setInterests(String interests) {
+        this.interests = interests;
+    }
+
+    public String getMovies() {
+        return movies;
+    }
+
+    public void setMovies(String movies) {
+        this.movies = movies;
+    }
+
+    public String getMusic() {
+        return music;
+    }
+
+    public void setMusic(String music) {
+        this.music = music;
     }
 
     /*    public String toString() {

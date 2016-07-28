@@ -236,6 +236,98 @@ public class SimpleTest {
     }
 
     @Test
+    public void vkApiGetUserTest() throws Exception {
+        String userId = "5592362";
+        String resultOneUser = vkApi.getUser(userId);
+        assertNotNull(resultOneUser);
+        logger.info("\nUserData: {}\n", resultOneUser);
+    }
+
+    @Test
+    public void vkApiGetUsersListTest() throws Exception {
+        VkApiParams params = VkApiParams.create();
+        params.add("count","10");
+        String resultUsersList = vkApi.getUsersList(params);
+        logger.info("\nUsersList: {}\n", resultUsersList);
+    }
+
+    @Test
+    public void vkApiExecuteUsersListTest() throws Exception {
+        String resultUsersList = vkApi.executeUsers();
+        logger.info("\nUsersList: {}\n", resultUsersList);
+    }
+
+    @Test
+    public void JSONParserExecuteListParse() throws Exception {
+        String resultUsersList = vkApi.executeUsers();
+
+        JSONParser parser = new JSONParser();
+        Set<User> usersList = parser.parseExecuteUsers(resultUsersList);
+
+        assertEquals(12,usersList.size());
+        for(User user : usersList) {
+            assertNotNull(user.getId());
+            assertNotNull(user.getFirst_name());
+            assertNotNull(user.getLast_name());
+            assertNotNull(user.getSex());
+        }
+    }
+
+    @Test
+    public void JSONParserUsersListParse() throws Exception {
+        try (InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("UsersListData.json")) {
+            int data = sourceFile.read();
+            char content;
+            String jsonString = "";
+            while (data != -1) {
+                content = (char) data;
+                jsonString += content;
+                data = sourceFile.read();
+            }
+            logger.info("\nJsonString: {}\n", jsonString);
+
+            JSONParser parser = new JSONParser();
+            Set<User> usersList = parser.parseUsers(jsonString);
+
+            assertEquals(10,usersList.size());
+        }
+    }
+
+    @Test
+    public void JSONParserOneUserParse() throws Exception {
+        try (InputStream sourceFile = this.getClass().getClassLoader().getResourceAsStream("UserData.json")) {
+            int data = sourceFile.read();
+            char content;
+            String jsonString = "";
+            while(data != -1) {
+                content = (char) data;
+                jsonString += content;
+                data = sourceFile.read();
+            }
+            logger.info("\nJsonString: {}\n", jsonString);
+
+            JSONParser parser = new JSONParser();
+
+            User parseUser = parser.parseUser(jsonString);
+            assertNotNull(parseUser);
+            assertNotNull(parseUser.getId());
+            assertNotNull(parseUser.getFirst_name());
+            assertNotNull(parseUser.getLast_name());
+            assertNotNull(parseUser.getCity());
+            assertNotNull(parseUser.getAbout());
+            assertNotNull(parseUser.getBooks());
+            assertNotNull(parseUser.getMovies());
+            assertNotNull(parseUser.getActivities());
+            assertNotNull(parseUser.getBdate());
+            assertNotNull(parseUser.getGames());
+            assertNotNull(parseUser.getInterests());
+            assertNotNull(parseUser.getMusic());
+            assertNotNull(parseUser.getSex());
+            logger.info("\n\nUserFirstName: {}\n\n", parseUser.getFirst_name());
+        }
+    }
+
+    @Test
     public void vkApiTest() throws Exception {
         String userId = "5592362";
 

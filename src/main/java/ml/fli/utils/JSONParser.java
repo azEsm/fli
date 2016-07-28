@@ -30,6 +30,27 @@ public class JSONParser {
         if (user.getAsJsonObject("city") != null) {
             userResult.setCity(user.getAsJsonObject("city").get("id").getAsString());
         }
+        if (user.get("about") != null) {
+            userResult.setAbout(user.get("about").getAsString());
+        }
+        if (user.get("activities") != null) {
+            userResult.setActivities(user.get("activities").getAsString());
+        }
+        if (user.get("books") != null) {
+            userResult.setBooks(user.get("books").getAsString());
+        }
+        if (user.get("games") != null) {
+            userResult.setGames(user.get("games").getAsString());
+        }
+        if (user.get("interests") != null) {
+            userResult.setInterests(user.get("interests").getAsString());
+        }
+        if (user.get("movies") != null) {
+            userResult.setMovies(user.get("movies").getAsString());
+        }
+        if (user.get("music") != null) {
+            userResult.setMusic(user.get("music").getAsString());
+        }
 
         return userResult;
     }
@@ -56,13 +77,34 @@ public class JSONParser {
             if (user.get("photo_400_orig") != null) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
             }
+            if (user.get("about") != null) {
+                oneUser.setAbout(user.get("about").getAsString());
+            }
+            if (user.get("activities") != null) {
+                oneUser.setActivities(user.get("activities").getAsString());
+            }
+            if (user.get("books") != null) {
+                oneUser.setBooks(user.get("books").getAsString());
+            }
+            if (user.get("games") != null) {
+                oneUser.setGames(user.get("games").getAsString());
+            }
+            if (user.get("interests") != null) {
+                oneUser.setInterests(user.get("interests").getAsString());
+            }
+            if (user.get("movies") != null) {
+                oneUser.setMovies(user.get("movies").getAsString());
+            }
+            if (user.get("music") != null) {
+                oneUser.setMusic(user.get("music").getAsString());
+            }
             listUsers.add(oneUser);
         }
 
         return listUsers;
     }
 
-    private User[] parseAudioAndGroups(String vkApiText, User[] arrayUsers) {
+    public User[] parseAudioAndGroups(String vkApiText, User[] arrayUsers) {
         JsonElement element = parser.parse(vkApiText);
 
         JsonArray response = element.getAsJsonObject().getAsJsonArray("response");
@@ -116,6 +158,27 @@ public class JSONParser {
             }
             if (user.get("photo_400_orig") != null) {
                 oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
+            }
+            if (user.get("about") != null) {
+                oneUser.setAbout(user.get("about").getAsString());
+            }
+            if (user.get("activities") != null) {
+                oneUser.setActivities(user.get("activities").getAsString());
+            }
+            if (user.get("books") != null) {
+                oneUser.setBooks(user.get("books").getAsString());
+            }
+            if (user.get("games") != null) {
+                oneUser.setGames(user.get("games").getAsString());
+            }
+            if (user.get("interests") != null) {
+                oneUser.setInterests(user.get("interests").getAsString());
+            }
+            if (user.get("movies") != null) {
+                oneUser.setMovies(user.get("movies").getAsString());
+            }
+            if (user.get("music") != null) {
+                oneUser.setMusic(user.get("music").getAsString());
             }
             if (object.get("audio").isJsonObject()) {
                 Set<String> audioList = new HashSet<>();

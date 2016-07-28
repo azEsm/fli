@@ -31,9 +31,9 @@ public final class VkServiceImpl implements VkService {
 
     //Заполнение параметров для получения пользователя по id
     public String getUser(String userId) {
-        return invokeApi("users.process", Params.create()
+        return invokeApi("users.get", Params.create()
             .add("user_id", userId)
-            .add("fields", "sex,bdate,city"));
+            .add("fields", "sex,bdate,city,about,activities,books,games,interests,movies,music"));
     }
 
     //Заполнение параметров для получения списка пользователя по заданным значениям
@@ -58,7 +58,7 @@ public final class VkServiceImpl implements VkService {
             parameter.add("age_from", String.valueOf(Integer.valueOf(age) - 5));
             parameter.add("age_to", String.valueOf(Integer.valueOf(age) + 5));
         }
-        parameter.add("fields", "sex,bdate,city,photo_400_orig");
+        parameter.add("fields", "sex,bdate,city,photo_400_orig,about,activities,books,games,interests,movies,music");
         return invokeApi("users.search", parameter);
     }
 
@@ -81,6 +81,7 @@ public final class VkServiceImpl implements VkService {
         return invokeApi("execute.GetUsers", Params.create());
     }
 
+    //Вызов хранимой процедуры для получения аудиозаписей и групп у 12 пользователей
     public String executeAudioAndGroup(String listId) {
         return invokeApi("execute.GetAudioAndGroup", Params.create().add("user", listId));
     }
