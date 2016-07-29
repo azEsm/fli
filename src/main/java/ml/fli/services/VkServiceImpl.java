@@ -94,12 +94,20 @@ public final class VkServiceImpl implements VkService {
         return invokeApi(reqUrl);
     }
 
+    /*private static String invokeApi(String requestUrl) {
+        try {
+            String result =
+        } catch (IOException e) {
+            throw Errors.asUnchecked(e);
+        }
+    }*/
+
     private static String invokeApi(String requestUrl) {
         try {
             final StringBuilder result = new StringBuilder();
             final URL url = new URL(requestUrl);
             try (InputStream is = url.openStream()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
                 reader.lines().forEach(result::append);
             }
             return result.toString();
