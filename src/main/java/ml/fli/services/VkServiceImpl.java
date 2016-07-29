@@ -64,14 +64,14 @@ public final class VkServiceImpl implements VkService {
 
     //Заполнение параметров для получения списка аудиозаписей пользователя по id
     public String getUserAudios(int userId, int count) {
-        return invokeApi("audio.process", Params.create()
+        return invokeApi("audio.get", Params.create()
             .add("count", String.valueOf(count))
             .add("owner_id", String.valueOf(userId)));
     }
 
     //Заполнение параметров для получения списка групп пользователя по id
     public String getUserGroups(int userId, int count) {
-        return invokeApi("groups.process", Params.create()
+        return invokeApi("groups.get", Params.create()
             .add("count", String.valueOf(count))
             .add("user_id", String.valueOf(userId)));
     }
@@ -94,12 +94,20 @@ public final class VkServiceImpl implements VkService {
         return invokeApi(reqUrl);
     }
 
+    /*private static String invokeApi(String requestUrl) {
+        try {
+            String result =
+        } catch (IOException e) {
+            throw Errors.asUnchecked(e);
+        }
+    }*/
+
     private static String invokeApi(String requestUrl) {
         try {
             final StringBuilder result = new StringBuilder();
             final URL url = new URL(requestUrl);
             try (InputStream is = url.openStream()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
                 reader.lines().forEach(result::append);
             }
             return result.toString();

@@ -34,10 +34,7 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -245,9 +242,10 @@ public class SimpleTest {
 
     @Test
     public void vkApiGetUsersListTest() throws Exception {
-        VkApiParams params = VkApiParams.create();
-        params.add("count","10");
-        String resultUsersList = vkApi.getUsersList(params);
+        Random rand = new Random();
+        int count = rand.nextInt(12) + 3;
+        VkApiParams param = VkApiParams.create().add("count",String.valueOf(count));
+        String resultUsersList = vkApi.getUsersList(param);
         logger.info("\nUsersList: {}\n", resultUsersList);
     }
 
@@ -265,11 +263,27 @@ public class SimpleTest {
         Set<User> usersList = parser.parseExecuteUsers(resultUsersList);
 
         assertEquals(12,usersList.size());
-        for(User user : usersList) {
+        for (User user : usersList) {
             assertNotNull(user.getId());
             assertNotNull(user.getFirst_name());
             assertNotNull(user.getLast_name());
             assertNotNull(user.getSex());
+            logger.info("\nUserId: {}", user.getId());
+            logger.info("\nUserFirstName: {}", user.getFirst_name());
+            logger.info("\nUserLastName: {}", user.getLast_name());
+            logger.info("\nUserSex: {}", user.getBdate());
+            logger.info("\nUserCity: {}", user.getCity());
+            logger.info("\nUserPhoto: {}", user.getPhoto_400_orig());
+            if (user.getAudio() != null) {
+                for (String audio : user.getAudio()) {
+                    logger.info("\nUserAudio: {}", audio);
+                }
+            }
+            if (user.getGroups() != null) {
+                for (String post : user.getGroups()) {
+                    logger.info("\nUsersGroups: {}", post);
+                }
+            }
         }
     }
 
