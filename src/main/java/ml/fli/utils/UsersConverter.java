@@ -1,7 +1,6 @@
 package ml.fli.utils;
 
-import ml.fli.models.User;
-import ml.fli.models.weka.VKAudio;
+import ml.fli.db.models.User;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -42,7 +41,7 @@ public class UsersConverter {
         dataSet.attribute("Id").setWeight(0.0);
         dataSet.attribute("Last_name").setWeight(0.0);
         dataSet.attribute("First_name").setWeight(0.0);
-        dataSet.attribute("Sex").setWeight(0.5);
+        dataSet.attribute("Sex").setWeight(2.5);
         dataSet.attribute("Audios").setWeight(0.7);
         dataSet.attribute("Groups").setWeight(0.9);
         dataSet.attribute("Home_town").setWeight(0.4);
@@ -60,17 +59,19 @@ public class UsersConverter {
             values[5] = dataSet.attribute(5).addStringValue((user.getBdate() != null) ? user.getBdate() : "");
 
             String audio = "";
-            for (VKAudio vkaudio: user.getUser_audio())
+            if ( user.getAudio() != null ) {
+            for (String vkaudio: user.getAudio())
             {
                 audio += vkaudio.toString() + ",";
-            }
+            }}
             values[6] = dataSet.attribute(6).addStringValue(audio);
 
             String group = "";
-            for (String vkgroup: user.getUser_group())
+            if (user.getGroups() != null) {
+            for (String vkgroup: user.getGroups())
             {
                 group += vkgroup.toString() + ",";
-            }
+            }}
             values[7] = dataSet.attribute(7).addStringValue(group);
 
             Instance instance = new DenseInstance(1.0, values);

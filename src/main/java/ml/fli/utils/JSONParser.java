@@ -6,11 +6,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ml.fli.db.models.User;
-import ml.fli.models.User;
-import ml.fli.models.weka.VKAudio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class JSONParser {
 
@@ -66,7 +66,7 @@ public class JSONParser {
         for (int i = 0; i < items.size(); i++) {
             User oneUser = new User();
             JsonObject user = items.get(i).getAsJsonObject();
-            oneUser.setId(user.get("id").getAsString());
+            oneUser.setId(user.get("id").getAsLong());
             oneUser.setFirst_name(user.get("first_name").getAsString());
             oneUser.setLast_name(user.get("last_name").getAsString());
             oneUser.setSex(user.get("sex").getAsString());
@@ -204,17 +204,17 @@ public class JSONParser {
         return resultListUser;
     }
 
-    public List<VKAudio> parseAudio(String vkApiListAudio)
+    public List<String> parseAudio(String vkApiListAudio)
     {
-        List<VKAudio>  ListAudios = new ArrayList<>();
+        List<String>  ListAudios = new ArrayList<>();
 
         JsonElement element = parser.parse(vkApiListAudio);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
         JsonArray items = response.getAsJsonArray("items");
         for (int i = 0; i < items.size(); i++) {
             JsonObject jsonAudio = items.get(i).getAsJsonObject();
-            VKAudio audio = new VKAudio( jsonAudio.get("artist").getAsString(),
-                    jsonAudio.get("title").getAsString());
+            String audio = jsonAudio.get("artist").getAsString() + ":" //
+                    + jsonAudio.get("title").getAsString();
 
             ListAudios.add(audio);
         }

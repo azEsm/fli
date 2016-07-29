@@ -2,18 +2,13 @@ package ml.fli;
 
 
 import ml.fli.controllers.UsersController;
-import ml.fli.models.*;
-import ml.fli.models.weka.VKAudio;
-import ml.fli.utils.*;
 import ml.fli.db.models.User;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
 import ml.fli.models.Response;
 import ml.fli.models.VkApiParams;
 import ml.fli.services.VkService;
-import ml.fli.utils.JSONParser;
-import ml.fli.utils.JsonConverter;
-import ml.fli.utils.UsersConverter;
+import ml.fli.utils.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,7 +31,6 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -159,7 +153,7 @@ public class SimpleTest {
         User u5 = new User(1345645, "fd", "SDFASF", "2", "", "aggadg");
         User u6 = new User(13654, "ASDFASF", "dfbsv", "2", "", "agdfg");
         User u7 = new User(23564765, "adfadg", "agdf", "2", "", "agfgadg");
-        Set<User> users = new HashSet<User>();
+        Set<User> users = new HashSet<>();
         users.add(u1);
         users.add(u2);
         users.add(u3);
@@ -211,59 +205,27 @@ public class SimpleTest {
     // on real vk users
     public void ClusterVKUserTest() throws Exception {
         String searchingUserId = "7272824";
-
-        //get vk data
-        VkApi vkApi = new VkApi();
-
-        String resultOneUser = vkApi.getUser(searchingUserId);
         JSONParser parser = new JSONParser();
+        Set<User> usersList = new HashSet<>();
+        //get vk data
+        String resultOneUser = vkApi.getUser(searchingUserId);
+
         User oneUser = parser.parseUser(resultOneUser);
+        String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
+        List<String> audioCollection = parser.parseAudio(audioString);
+        String groupString = vkApi.getUserGroups(Integer.parseInt(searchingUserId), 20);
+        List<String> groups = parser.parseVKGroups(groupString);
+        usersList.add(oneUser);
 
-
-        String choiceSex = "2"; //TODO sexEnum
-        VkApiParams param = VkApiParams.create();
-        if (oneUser.getCity() instanceof String) {
-            param.add("city", "1");
-        }
-        if (oneUser.getBdate() instanceof String) {
-            String year = oneUser.getBdate();
-            if (year.length() > 5) {
-                Calendar calendar = Calendar.getInstance();
-
-                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(4));
-                param.add("age", String.valueOf(age));
+        for (int counter = 0; counter <=2; counter++){
+            String resultUsersList = vkApi.executeUsers();
+            if (resultUsersList != null){
+                Set<User> tmp = parser.parseExecuteUsers(resultUsersList);
+                usersList.addAll(tmp);
             }
         }
-        //param.add("sex", choiceSex);
-        String resultUserList = vkApi.getUsersList(param);
-        List<User> listUsers = parser.parseUsers(resultUserList);
-        listUsers.add(oneUser);
 
-        for (User user:listUsers)
-        {
-            List<VKAudio> userAudiosList = new ArrayList<>();
-            List<String> userGroupsList = new ArrayList<>();
-
-            String userAudios = vkApi.getUserAudios(user.getId(), 20);
-            //FIXME
-            if (!userAudios.contains("error")) {
-
-                if (userAudios != null)
-                    userAudiosList = parser.parseAudio(userAudios);
-            }
-
-            String userGroups = vkApi.getUserGroups(user.getId(), 20);
-            if (!userGroups.contains("error")) {
-
-                if (userGroups != null)
-                    userGroupsList = parser.parseVKGroups(userGroups);
-            }
-
-            user.setUser_audio(userAudiosList);
-            user.setUser_group(userGroupsList);
-        }
-
-        Instances dataSet = UsersConverter.usersToInstances(new HashSet<User>(listUsers));
+        Instances dataSet = UsersConverter.usersToInstances(usersList);
 
         Klusterer cluster = new Klusterer();
         Set<Instance> result = cluster.FindCluster(dataSet, Integer.parseInt(searchingUserId));
@@ -534,7 +496,7 @@ public class SimpleTest {
         }
     }
 
-    @Test
+   /* @Test
     public void vkApiTest() throws Exception {
         VkApi vkApi = new VkApi();
         String userId = "5592362";
@@ -572,7 +534,7 @@ public class SimpleTest {
         Set<User> listUsers = parser.parseUsers(resultUserList);
         logger.info("\nResult:\n{}", listUsers.size());
         logger.info("\nResultUserList:\n{}", resultUserList);
-    }
+    }*/
 
     @Test
     public void jsonConverterTest() throws Exception {
