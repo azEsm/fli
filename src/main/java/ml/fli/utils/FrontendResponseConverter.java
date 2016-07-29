@@ -19,10 +19,10 @@ public class FrontendResponseConverter {
         for (Instance instance:searchedData){
             FrontendResponse.Raw resultUser = new FrontendResponse.Raw();
 
-            resultUser.setAccountUrl("https://vk.com/id" + instance.value(0));
-            resultUser.setName(instance.value(1) + " " + instance.value(2));
+            resultUser.setAccountUrl("https://vk.com/id" + (int) instance.value(0));
+            resultUser.setName(instance.stringValue(1) + " " + instance.stringValue(2));
             //FIXME
-            resultUser.setPhotoUrl("http://" + "placehold.it/300x300/");
+            resultUser.setPhotoUrl("http://placehold.it/300x300/");
             //
             resultUser.setRate(new Random().nextDouble());
             userRaw.add(resultUser);
