@@ -1,0 +1,22 @@
+{
+  "response": [
+    {
+      "id": 5592362,
+      "first_name": "Kate",
+      "last_name": "Klep",
+      "sex": 1,
+      "bdate": "19.5.1993",
+      "city": {
+        "id": 1,
+        "title": "Moscow"
+      },
+      "interests": "",
+      "music": "Eminem vs. Kanye West",
+      "activities": "contemplator",
+      "movies": "All that has Kim Kardashian",
+      "books": "All that has Kim Kardashian",
+      "games": "",
+      "about": "A girl from the Internet.\n\nkateclappmail @gmail.com\n"
+    }
+  ]
+}

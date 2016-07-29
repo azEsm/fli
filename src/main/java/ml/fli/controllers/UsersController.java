@@ -3,15 +3,12 @@ package ml.fli.controllers;
 import com.wordnik.swagger.annotations.ApiOperation;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
-import ml.fli.models.User;
-import ml.fli.services.MockUsersServiceImpl;
-import ml.fli.services.UsersService;
+import ml.fli.services.MockProcessUsersServiceImpl;
+import ml.fli.services.ProcessUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -22,12 +19,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UsersController {
 
     @Autowired
-    private UsersService usersService;
+    private ProcessUsersService processUsersService;
 
     @ApiOperation("Получить сортированный список пользователей")
     @RequestMapping(value = "/get", method = {GET, POST})
     public FrontendResponse findUsers(@RequestBody FrontendRequest request) {
-        return usersService.get(request);
+        return processUsersService.process(request);
     }
 
     /**
@@ -37,6 +34,6 @@ public class UsersController {
     @ApiOperation("Проверка доступности контроллера")
     @RequestMapping(value = "/test", method = {GET, POST})
     public FrontendResponse test() {
-        return ((MockUsersServiceImpl) usersService).getSomeUsers();
+        return ((MockProcessUsersServiceImpl) processUsersService).getSomeUsers();
     }
 }

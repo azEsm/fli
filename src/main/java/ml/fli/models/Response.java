@@ -1,5 +1,7 @@
 package ml.fli.models;
 
+import ml.fli.db.models.User;
+
 import java.util.List;
 
 public class Response {
