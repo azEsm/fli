@@ -204,36 +204,79 @@ public class JSONParser {
         return resultListUser;
     }
 
-    public List<String> parseAudio(String vkApiListAudio)
+    public Set<String> parseAudio(String vkApiListAudio)
     {
-        List<String>  ListAudios = new ArrayList<>();
+        Set<String>  ListAudios = new HashSet<>();
 
         JsonElement element = parser.parse(vkApiListAudio);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
-        JsonArray items = response.getAsJsonArray("items");
-        for (int i = 0; i < items.size(); i++) {
-            JsonObject jsonAudio = items.get(i).getAsJsonObject();
-            String audio = jsonAudio.get("artist").getAsString() + ":" //
-                    + jsonAudio.get("title").getAsString();
+        if (response != null) {
+            JsonArray items = response.getAsJsonArray("items");
+            for (int i = 0; i < items.size(); i++) {
+                JsonObject jsonAudio = items.get(i).getAsJsonObject();
+                String audio = jsonAudio.get("artist").getAsString() + ":" //
+                        + jsonAudio.get("title").getAsString();
 
-            ListAudios.add(audio);
+                ListAudios.add(audio);
+            }
         }
 
         return ListAudios;
     }
 
-    public List<String> parseVKGroups(String vkApiListGroups)
+    public Set<String> parseVKGroups(String vkApiListGroups)
     {
-        List<String>  listGroups = new ArrayList<>();
+        Set<String>  listGroups = new HashSet<>();
 
         JsonElement element = parser.parse(vkApiListGroups);
         JsonObject response = element.getAsJsonObject().getAsJsonObject("response");
-        JsonArray items = response.getAsJsonArray("items");
-        for (int i = 0; i < items.size(); i++) {
-            String group = items.get(i).getAsString();
-            listGroups.add(group);
+        if (response != null) {
+            JsonArray items = response.getAsJsonArray("items");
+            for (int i = 0; i < items.size(); i++) {
+                String group = items.get(i).getAsString();
+                listGroups.add(group);
+            }
         }
 
         return listGroups;
+    }
+
+    public boolean errorAudioClose(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            if (code.equals(201)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean errorManyRequest(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            if (code.equals(6)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean errorCaptchaNeeded(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            if (code.equals(14)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

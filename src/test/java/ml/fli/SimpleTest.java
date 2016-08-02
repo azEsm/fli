@@ -212,20 +212,64 @@ public class SimpleTest {
         String resultOneUser = vkApi.getUser(searchingUserId);
 
         User oneUser = parser.parseUser(resultOneUser);
+
         String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
-        List<String> audioCollection = parser.parseAudio(audioString);
+        Set<String> audioCollection = parser.parseAudio(audioString);
+        oneUser.setAudio(audioCollection);
+
         String groupString = vkApi.getUserGroups(Integer.parseInt(searchingUserId), 20);
-        List<String> groups = parser.parseVKGroups(groupString);
+        Set<String> groups = parser.parseVKGroups(groupString);
+        oneUser.setGroups(groups);
         usersList.add(oneUser);
 
-        for (int counter = 0; counter <=2; counter++){
+/*        for (int counter = 0; counter <=2; counter++){
             String resultUsersList = vkApi.executeUsers();
             if (resultUsersList != null){
                 Set<User> tmp = parser.parseExecuteUsers(resultUsersList);
                 usersList.addAll(tmp);
             }
+        }*/
+
+        VkApiParams param = VkApiParams.create().add("count","1000");
+        String resultUsersList = vkApi.getUsersList(param);
+
+        Set<User> resultVkApi = parser.parseUsers(resultUsersList);
+
+        for (User user: resultVkApi) {
+            String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+            //System.out.println(audioVkApi);
+
+            if (parser.errorManyRequest(audioVkApi)) {
+                Thread.sleep(700);
+                audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+            }
+            if (parser.errorCaptchaNeeded(audioVkApi)) {
+                Thread.sleep(45000);
+                audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+            }
+            if (!parser.errorAudioClose(audioVkApi)) {
+                Set<String> usersAudio = parser.parseAudio(audioVkApi);
+                //System.out.println(usersAudio);
+                user.setAudio(usersAudio);
+            }
+
+            String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+            //System.out.println(groupVkApi);
+
+            if (parser.errorManyRequest(groupVkApi)) {
+                Thread.sleep(700);
+                groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+            }
+            if (parser.errorCaptchaNeeded(groupVkApi)) {
+                Thread.sleep(45000);
+                groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+            }
+            Set<String> userGroups = parser.parseVKGroups(groupVkApi);
+            user.setGroups(userGroups);
+            usersList.add(user);
         }
 
+        System.out.println("Размер массива: " + usersList.size());
         Instances dataSet = UsersConverter.usersToInstances(usersList);
 
         Klusterer cluster = new Klusterer();
@@ -383,29 +427,6 @@ public class SimpleTest {
     }
 
     @Test
-    public void parserExecute() throws Exception {
-//        String request = "https://api.vk.com/method/execute.GetAudioAndGroup" +
-//                "?user=2683946,3925445,182200279,98506897,161060811,421848,102544966,6773527,11100369,1420471,68143899,66437505" +
-//                "&access_token=03ffa07f3a99fee7ce0bad8851ec004f7a516b48da91b4c02c7239aaa4acca65f90a5d5e918e5f19a0e1b&v=5.53";
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(request,String.class);
-//        logger.info("\nResult:\n{}", result);
-
-//        String listId = "2683946,3925445,182200279,98506897,161060811,421848,102544966,6773527,11100369,1420471,68143899,66437505";
-        JSONParser parser = new JSONParser();
-
-        VkApiParams param = VkApiParams.create().add("count", "24");
-        String vkApiExecute = vkApi.getUsersList(param);
-
-        Set<User> usersList = parser.parseUsers(vkApiExecute);
-        logger.info("\nResult:\n{}", usersList.size());
-//        JSONParser parser = new JSONParser();
-//        Set<User> userList = parser.parseExecuteUsers(vkApiExecute);
-//        logger.info("\nResult:\n{}", vkApiExecute);
-    }
-
-    @Test
     public void vkApiGetUserTest() throws Exception {
         String userId = "5592362";
         String resultOneUser = vkApi.getUser(userId);
@@ -441,22 +462,6 @@ public class SimpleTest {
             assertNotNull(user.getFirst_name());
             assertNotNull(user.getLast_name());
             assertNotNull(user.getSex());
-            logger.info("\nUserId: {}", user.getId());
-            logger.info("\nUserFirstName: {}", user.getFirst_name());
-            logger.info("\nUserLastName: {}", user.getLast_name());
-            logger.info("\nUserSex: {}", user.getBdate());
-            logger.info("\nUserCity: {}", user.getCity());
-            logger.info("\nUserPhoto: {}", user.getPhoto_400_orig());
-            if (user.getAudio() != null) {
-                for (String audio : user.getAudio()) {
-                    logger.info("\nUserAudio: {}", audio);
-                }
-            }
-            if (user.getGroups() != null) {
-                for (String post : user.getGroups()) {
-                    logger.info("\nUsersGroups: {}", post);
-                }
-            }
         }
     }
 
@@ -510,7 +515,6 @@ public class SimpleTest {
             assertNotNull(parseUser.getInterests());
             assertNotNull(parseUser.getMusic());
             assertNotNull(parseUser.getSex());
-            logger.info("\n\nUserFirstName: {}\n\n", parseUser.getFirst_name());
         }
     }
 

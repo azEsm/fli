@@ -24,7 +24,7 @@ public interface VkService {
      * @param count
      * @return
      */
-    String getUserAudios(int userId, int count);
+    String getUserAudios(long userId, int count);
 
     /**
      * Заполнение параметров для получения списка групп пользователя по id
@@ -32,7 +32,7 @@ public interface VkService {
      * @param count
      * @return
      */
-    String getUserGroups(int userId, int count);
+    String getUserGroups(long userId, int count);
 
     /**
      * Вызов хранимой процедуры для получения 12 пользователей с аудиозаписями и группами

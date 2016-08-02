@@ -63,14 +63,14 @@ public final class VkServiceImpl implements VkService {
     }
 
     //Заполнение параметров для получения списка аудиозаписей пользователя по id
-    public String getUserAudios(int userId, int count) {
+    public String getUserAudios(long userId, int count) {
         return invokeApi("audio.get", Params.create()
             .add("count", String.valueOf(count))
             .add("owner_id", String.valueOf(userId)));
     }
 
     //Заполнение параметров для получения списка групп пользователя по id
-    public String getUserGroups(int userId, int count) {
+    public String getUserGroups(long userId, int count) {
         return invokeApi("groups.get", Params.create()
             .add("count", String.valueOf(count))
             .add("user_id", String.valueOf(userId)));
