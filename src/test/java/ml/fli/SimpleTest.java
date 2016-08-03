@@ -206,11 +206,15 @@ public class SimpleTest {
     // on real vk users
     public void ClusterVKUserTest() throws Exception {
         String searchingUserId = "7272824";
+        String falseUserId = "";
         JSONParser parser = new JSONParser();
         Set<User> usersList = new HashSet<>();
         //get vk data
-        String resultOneUser = vkApi.getUser(searchingUserId);
-
+        String resultOneUser = vkApi.getUser(falseUserId);
+        System.out.println(resultOneUser);
+        if (parser.errorUserExist(resultOneUser)) {
+            System.out.println("Пользователя не существует");
+        }
         User oneUser = parser.parseUser(resultOneUser);
 
         String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
@@ -230,7 +234,7 @@ public class SimpleTest {
             }
         }*/
 
-        VkApiParams param = VkApiParams.create().add("count","1000");
+        VkApiParams param = VkApiParams.create().add("count","50");
         String resultUsersList = vkApi.getUsersList(param);
 
         Set<User> resultVkApi = parser.parseUsers(resultUsersList);

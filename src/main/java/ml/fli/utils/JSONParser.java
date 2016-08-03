@@ -7,9 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ml.fli.db.models.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class JSONParser {
@@ -275,6 +273,28 @@ public class JSONParser {
             Integer code = error.get("error_code").getAsInt();
             if (code.equals(14)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean errorUserExist(String request) {
+        JsonElement element = parser.parse(request);
+
+        if (element.getAsJsonObject().get("response") instanceof JsonArray) {
+            JsonArray response = element.getAsJsonObject().getAsJsonArray("response");
+            if (response != null) {
+                Integer size = response.size();
+                if (size.equals(0)) {
+                    return true;
+                }
+                String code = response.get(0).getAsJsonObject().get("first_name").getAsString();
+                if (code.equals("DELETED")) {
+                    return true;
+                }
+                if (code.equals("Deleted")) {
+                    return true;
+                }
             }
         }
         return false;

@@ -42,7 +42,7 @@ public class Klusterer {
         clusterer.buildClusterer(data);
     }
 
-    private  Set<Instance> FindTargetCluster(Instances data, int searchedId) throws Exception
+    private  Set<Instance> FindTargetCluster(Instances data, long searchedId) throws Exception
     {
         int searchedClustererIndex = 0;
 
@@ -77,7 +77,7 @@ public class Klusterer {
         return  thisData;
     }
 
-    public  Set<Instance> FindCluster(Instances data, int findedId) throws  Exception
+    public  Set<Instance> FindCluster(Instances data, long findedId) throws  Exception
     {
         this.dataBackup = data;
 
