@@ -1,25 +1,17 @@
 package ml.fli.services;
 
-import ml.fli.db.models.User;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
-import ml.fli.models.VkApiParams;
-import ml.fli.utils.Errors;
-import ml.fli.utils.JSONParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
 import java.util.Set;
 
 @Service
-public class MockProcessUsersServiceImpl implements ProcessUsersService {
-    @Autowired
-    VkService vkApi;
+public class MockProcessUsersServiceImpl //implements ProcessUsersService {
+{
 
-    @Override
-    public FrontendResponse process(@Nonnull FrontendRequest request) {
+    public FrontendResponse process1(@Nonnull FrontendRequest request) {
         return getSomeUsers();
     }
 
@@ -58,38 +50,4 @@ public class MockProcessUsersServiceImpl implements ProcessUsersService {
         return result;
     }
 
-    public FrontendResponse getVkApi() {
-        FrontendResponse result = new FrontendResponse();
-        Random rand = new Random();
-        int count = rand.nextInt(12) + 3;
-        VkApiParams param = VkApiParams.create().add("count",String.valueOf(count));
-        JSONParser parser = new JSONParser();
-        try {
-            String Users = vkApi.getUsersList(param);
-
-            Set<User> vkApiResult = parser.parseUsers(Users);
-
-            Set<FrontendResponse.Raw> rows = result.getResult();
-
-            double rate = 0;
-            for (User oneUser: vkApiResult) {
-                rate += 0.1;
-                FrontendResponse.Raw resultUser = new FrontendResponse.Raw();
-                resultUser.setAccountUrl("https://vk.com/id" + oneUser.getId());
-                resultUser.setName(oneUser.getFirst_name() + " " + oneUser.getLast_name());
-                resultUser.setPhotoUrl(oneUser.getPhoto_400_orig());
-                resultUser.setRate(rate);
-                System.out.println("User: " + oneUser.getFirst_name() + " " + oneUser.getLast_name());
-                System.out.println("AccountUrl: " + "https://vk.com/id" + oneUser.getId());
-                System.out.println("PhotoUrl: " + oneUser.getPhoto_400_orig());
-                System.out.println("Rate: " + rate);
-                rows.add(resultUser);
-            }
-
-        } catch (Exception e) {
-            throw Errors.asUnchecked(e);
-        }
-
-        return result;
-    }
 }

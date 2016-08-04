@@ -239,6 +239,16 @@ public class JSONParser {
         return listGroups;
     }
 
+    public boolean presenseOfErrors(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean errorAudioClose(String request) {
         JsonElement element = parser.parse(request);
 

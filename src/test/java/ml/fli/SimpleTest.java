@@ -1,6 +1,7 @@
 package ml.fli;
 
 
+import ml.fli.controllers.TransferController;
 import ml.fli.controllers.UsersController;
 import ml.fli.db.models.User;
 import ml.fli.models.FrontendRequest;
@@ -50,6 +51,9 @@ public class SimpleTest {
 
     @Autowired
     private UsersController usersController;
+
+    @Autowired
+    private TransferController transferController;
 
     @Autowired
     VkService vkApi;
@@ -522,46 +526,6 @@ public class SimpleTest {
         }
     }
 
-   /* @Test
-    public void vkApiTest() throws Exception {
-        VkApi vkApi = new VkApi();
-        String userId = "5592362";
-
-        String resultOneUser = vkApi.getUser(userId);
-
-        JSONParser parser = new JSONParser();
-        User oneUser = parser.parseUser(resultOneUser);
-        logger.info("\nResultUser:\n{}", oneUser.getId() + " " + oneUser.getFirst_name() + " "
-                + oneUser.getLast_name() + " " + oneUser.getSex() + " " + oneUser.getBdate() + " " + oneUser.getCity());
-        logger.info("\nResultOneUser:\n{}", resultOneUser);
-
-        String resultGroup = vkApi.getUserGroups(132154659,10);
-        logger.info("\nResultGroup:\n{}", resultGroup);
-        String resultAudio = vkApi.getUserAudios(132154659,10);
-        logger.info("\nResultAudio:\n{}", resultAudio);
-
-        String choiceSex = "1";
-        VkApiParams param = VkApiParams.create();
-        if (!Strings.isNullOrEmpty(oneUser.getCity())) {
-            param.add("city", oneUser.getCity());
-        }
-        if (!Strings.isNullOrEmpty(oneUser.getBdate())) {
-            String year = oneUser.getBdate();
-            if (year.length() > 5) {
-                Calendar calendar = Calendar.getInstance();
-
-                int age = calendar.get(Calendar.YEAR) - Integer.valueOf(year.substring(5));
-                param.add("age", String.valueOf(age));
-            }
-        }
-        param.add("sex", choiceSex);
-        param.add("count", "100");
-        String resultUserList = vkApi.getUsersList(param);
-        Set<User> listUsers = parser.parseUsers(resultUserList);
-        logger.info("\nResult:\n{}", listUsers.size());
-        logger.info("\nResultUserList:\n{}", resultUserList);
-    }*/
-
     @Test
     public void jsonConverterTest() throws Exception {
         try (InputStream usersStream = this.getClass().getClassLoader().getResourceAsStream("person.json")) {
@@ -587,10 +551,25 @@ public class SimpleTest {
     @Test
     public void testUsersController() {
         FrontendRequest request = new FrontendRequest();
-        request.setUserId("123");
+        request.setUserId("7272824");
         request.setSex("1");
         FrontendResponse users = usersController.findUsers(request);
         assertNotNull(users);
+    }
+
+    @Test
+    public void testTransferController() {
+        FrontendRequest request = new FrontendRequest();
+        request.setUserId("7272824");
+        request.setSex("0");
+        try {
+            FrontendResponse users = transferController.get(request);
+            assertNotNull(users);
+            logger.info("Result:\n{}", users.getResult().size());
+
+        } catch (Exception e) {
+            throw Errors.asUnchecked(e);
+        }
     }
 
     @Test

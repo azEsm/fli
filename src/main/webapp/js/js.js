@@ -25,11 +25,16 @@ function connect() {
 
     var socket = new SockJS('/process');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function() {
+    stompClient.connect({}, function(frame) {
 
-        stompClient.subscribe('/data/userList',function(FrontendResponse){
-
+        stompClient.subscribe('/queue/userList', function(FrontendResponse){
             showUsers(JSON.parse(FrontendResponse.body));
+        });
+        stompClient.subscribe("/queue/errors", function(msg) {
+            alert(msg.body);
+        });
+        stompClient.subscribe("/queue/errorUserExist", function(msg) {
+            alert(msg.body);
         });
     });
 }

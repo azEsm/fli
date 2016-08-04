@@ -32,7 +32,7 @@ public final class VkServiceImpl implements VkService {
     //Заполнение параметров для получения пользователя по id
     public String getUser(String userId) {
         return invokeApi("users.get", Params.create()
-            .add("user_id", userId)
+            .add("user_ids", userId)
             .add("fields", "sex,bdate,city,about,activities,books,games,interests,movies,music"));
     }
 
@@ -93,14 +93,6 @@ public final class VkServiceImpl implements VkService {
             .replace("{PARAMETERS}&", parameters);
         return invokeApi(reqUrl);
     }
-
-    /*private static String invokeApi(String requestUrl) {
-        try {
-            String result =
-        } catch (IOException e) {
-            throw Errors.asUnchecked(e);
-        }
-    }*/
 
     private static String invokeApi(String requestUrl) {
         try {
