@@ -33,7 +33,7 @@ public final class VkServiceImpl implements VkService {
     public String getUser(String userId) {
         return invokeApi("users.get", Params.create()
             .add("user_id", userId)
-            .add("fields", "sex,bdate,city,about,activities,books,games,interests,movies,music"));
+            .add("fields", "sex,bdate,city,about,activities,books,games,interests,movies,music,photo_400_orig"));
     }
 
     //Заполнение параметров для получения списка пользователя по заданным значениям

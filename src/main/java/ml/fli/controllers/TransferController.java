@@ -32,49 +32,40 @@ public class TransferController {
 
         JSONParser parser = new JSONParser();
         System.out.println("start");
-        String searchingUserId = message.getUserId();
-        String searchingSex = message.getSex();
+       // String searchingUserId = message.getUserId();
+       // String searchingSex = message.getSex();
 
         //get vk data
         System.out.println("get");
-        //get one user
-        String resultOneUser = vkApi.getUser(searchingUserId);
-        try {
-            if (parser.errorUserExist(resultOneUser)) {
-                System.out.println("error");
-                String error = errorUserExist();
-            }
-            else {
-                System.out.println("cluster");
-                User oneUser = parser.parseUser(resultOneUser);
-                System.out.println(oneUser.getId());
-                FrontendResponse response = Cluster(oneUser, searchingSex);
-                return response;
-            }
-        }
-        catch (NullPointerException e) {
-            System.out.println("Oh, my god why?");
-        }
-        return new FrontendResponse();
-/*
 
+        String searchingUserId = "7272824";
+        String falseUserId = "";
+        Set<User> usersList = new HashSet<>();
+        //get vk data
+        String resultOneUser = vkApi.getUser(searchingUserId);
+        User oneUser = parser.parseUser(resultOneUser);
+        Thread.sleep(300);
         String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
         Set<String> audioCollection = parser.parseAudio(audioString);
         oneUser.setAudio(audioCollection);
-
+        Thread.sleep(300);
         String groupString = vkApi.getUserGroups(Integer.parseInt(searchingUserId), 20);
         Set<String> groups = parser.parseVKGroups(groupString);
         oneUser.setGroups(groups);
         usersList.add(oneUser);
+        Thread.sleep(300);
 
-        //get usersList
-        VkApiParams param = VkApiParams.create().add("count","1000").add("sex", message.getSex());
+        VkApiParams param = VkApiParams.create().add("count","100");
         String resultUsersList = vkApi.getUsersList(param);
 
         Set<User> resultVkApi = parser.parseUsers(resultUsersList);
 
+        int index = 1;
         for (User user: resultVkApi) {
+            System.out.println(index);
             String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+            Thread.sleep(300);
+            //System.out.println(audioVkApi);
 
             if (parser.errorManyRequest(audioVkApi)) {
                 Thread.sleep(700);
@@ -86,11 +77,13 @@ public class TransferController {
             }
             if (!parser.errorAudioClose(audioVkApi)) {
                 Set<String> usersAudio = parser.parseAudio(audioVkApi);
+                //System.out.println(usersAudio);
                 user.setAudio(usersAudio);
             }
 
             String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
-
+            //System.out.println(groupVkApi);
+            Thread.sleep(300);
             if (parser.errorManyRequest(groupVkApi)) {
                 Thread.sleep(700);
                 groupVkApi = vkApi.getUserGroups(user.getId(), 20);
@@ -102,23 +95,19 @@ public class TransferController {
             Set<String> userGroups = parser.parseVKGroups(groupVkApi);
             user.setGroups(userGroups);
             usersList.add(user);
+            Thread.sleep(350);
+            index++;
         }
-        *//*for (int counter = 0; counter <=2; counter++){
-            String resultUsersList = vkApi.executeUsers();
-            if (resultUsersList != null){
-                Set<User> tmp = parser.parseExecuteUsers(resultUsersList);
-                usersList.addAll(tmp);
-            }
-        }*//*
-        System.out.println("instance");
+
         Instances dataSet = UsersConverter.usersToInstances(usersList);
 
-        System.out.println("cluster");
         Klusterer cluster = new Klusterer();
         Set<Instance> result = cluster.FindCluster(dataSet, Integer.parseInt(searchingUserId));
-        System.out.println("done");*/
 
-        //return FrontendResponseConverter.instanceToResponse(result);
+        for (Instance inst: result)
+            System.out.println(inst);
+
+        return FrontendResponseConverter.instanceToResponse(result);
 
        // return ((MockProcessUsersServiceImpl) processUsersService).getVkApi();
     }

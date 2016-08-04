@@ -210,11 +210,11 @@ public class SimpleTest {
         JSONParser parser = new JSONParser();
         Set<User> usersList = new HashSet<>();
         //get vk data
-        String resultOneUser = vkApi.getUser(falseUserId);
-        System.out.println(resultOneUser);
+        String resultOneUser = vkApi.getUser(searchingUserId);
+/*        System.out.println(resultOneUser);
         if (parser.errorUserExist(resultOneUser)) {
             System.out.println("Пользователя не существует");
-        }
+        }*/
         User oneUser = parser.parseUser(resultOneUser);
 
         String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
@@ -234,13 +234,14 @@ public class SimpleTest {
             }
         }*/
 
-        VkApiParams param = VkApiParams.create().add("count","50");
+        VkApiParams param = VkApiParams.create().add("count","100");
         String resultUsersList = vkApi.getUsersList(param);
 
         Set<User> resultVkApi = parser.parseUsers(resultUsersList);
 
         for (User user: resultVkApi) {
             String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+            Thread.sleep(300);
             //System.out.println(audioVkApi);
 
             if (parser.errorManyRequest(audioVkApi)) {
@@ -259,7 +260,7 @@ public class SimpleTest {
 
             String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
             //System.out.println(groupVkApi);
-
+            Thread.sleep(300);
             if (parser.errorManyRequest(groupVkApi)) {
                 Thread.sleep(700);
                 groupVkApi = vkApi.getUserGroups(user.getId(), 20);
@@ -271,9 +272,9 @@ public class SimpleTest {
             Set<String> userGroups = parser.parseVKGroups(groupVkApi);
             user.setGroups(userGroups);
             usersList.add(user);
+            Thread.sleep(350);
         }
 
-        System.out.println("Размер массива: " + usersList.size());
         Instances dataSet = UsersConverter.usersToInstances(usersList);
 
         Klusterer cluster = new Klusterer();

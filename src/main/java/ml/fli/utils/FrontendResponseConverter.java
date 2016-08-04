@@ -22,7 +22,10 @@ public class FrontendResponseConverter {
             resultUser.setAccountUrl("https://vk.com/id" + (int) instance.value(0));
             resultUser.setName(instance.stringValue(1) + " " + instance.stringValue(2));
             //FIXME
-            resultUser.setPhotoUrl("http://placehold.it/300x300/");
+            if (instance.stringValue(8).equals(""))
+                resultUser.setPhotoUrl("http://placehold.it/300x300/");
+            else
+                resultUser.setPhotoUrl(instance.stringValue(8));
             //
             resultUser.setRate(new Random().nextDouble());
             userRaw.add(resultUser);

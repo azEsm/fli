@@ -26,6 +26,8 @@ public class UsersConverter {
         Attribute bdate = new Attribute("Bdate", (ArrayList<String>) null);
         Attribute audios = new Attribute("Audios", (ArrayList<String>) null);
         Attribute groups = new Attribute("Groups", (ArrayList<String>) null);
+        Attribute photo = new Attribute("Photo", (ArrayList<String>) null);
+
 
         attributesList.add(id);
         attributesList.add(first_name);
@@ -35,6 +37,7 @@ public class UsersConverter {
         attributesList.add(bdate);
         attributesList.add(audios);
         attributesList.add(groups);
+        attributesList.add(photo);
 
         Instances dataSet = new Instances("Users", attributesList, 0);
         //FIXME расставить веса
@@ -46,6 +49,7 @@ public class UsersConverter {
         dataSet.attribute("Groups").setWeight(0.9);
         dataSet.attribute("Home_town").setWeight(0.4);
         dataSet.attribute("Bdate").setWeight(0.2);
+        dataSet.attribute("Photo").setWeight(0.0);
         // cast to instances
 
         for (User user : users) {
@@ -73,6 +77,13 @@ public class UsersConverter {
                 group += vkgroup.toString() + ",";
             }}
             values[7] = dataSet.attribute(7).addStringValue(group);
+            int size = 0;
+            if (user.getPhoto_400_orig() != null) {
+                size = (user.getPhoto_400_orig()).length();
+                values[8] = dataSet.attribute("Photo").addStringValue(user.getPhoto_400_orig());
+            }
+            else
+            {}
 
             Instance instance = new DenseInstance(1.0, values);
             dataSet.add(instance);

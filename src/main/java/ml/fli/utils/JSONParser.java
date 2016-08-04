@@ -51,6 +51,9 @@ public class JSONParser {
         if (user.get("music") != null) {
             userResult.setMusic(user.get("music").getAsString());
         }
+        if (user.get("photo_400_orig") != null) {
+            userResult.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
+        }
 
         return userResult;
     }
