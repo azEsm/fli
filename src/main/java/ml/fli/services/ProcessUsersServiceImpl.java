@@ -26,6 +26,8 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    private long userId;
+
     @Autowired
     public ProcessUsersServiceImpl(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -48,7 +50,7 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         FrontendResponse result = new FrontendResponse();
         Klusterer cluster = new Klusterer();
         try {
-            Set<Instance> resultCluster = cluster.FindCluster(dataSet, Long.valueOf(searchingUserId));
+            Set<Instance> resultCluster = cluster.FindCluster(dataSet, this.userId);
             result = FrontendResponseConverter.instanceToResponse(resultCluster);
         } catch (Exception e) {
             throw Errors.asUnchecked(e);
@@ -72,6 +74,7 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
             else {
                 //parse one user
                 User searchingUser = parser.parseUser(resultOneUser);
+                this.userId = searchingUser.getId();
 
                 String audioString = vkApi.getUserAudios(searchingUser.getId(), 20);
                 Set<String> audioCollection = parser.parseAudio(audioString);

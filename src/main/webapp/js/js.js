@@ -27,16 +27,16 @@ function connect() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function() {
 
-        stompClient.subscribe('/data/userList',function(FrontendResponse){
+        stompClient.subscribe('/queue/userList',function(FrontendResponse){
 
             showUsers(JSON.parse(FrontendResponse.body));
         });
 
-        stompClient.subscribe('/data/errors',function(handleException){
+        stompClient.subscribe('/queue/errors',function(handleException){
 
                     alert(handleException.body);
         });
-        stompClient.subscribe('/data/errorUserExist',function(errorUserExist){
+        stompClient.subscribe('/queue/errorUserExist',function(errorUserExist){
 
                     alert(errorUserExist.body);
         });

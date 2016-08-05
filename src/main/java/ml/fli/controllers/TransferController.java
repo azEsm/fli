@@ -18,13 +18,16 @@ public class TransferController {
     @MessageMapping("/process")
     @SendTo("/queue/userList")
     public FrontendResponse get(FrontendRequest message) throws Exception {
+        System.out.println(message.getUserId());
         FrontendResponse result = processUsersService.process(message);
+        System.out.println(result.getResult().size());
         return result;
     }
 
     @MessageExceptionHandler
     @SendTo("/queue/errors")
     public String handleException(Throwable exception) {
+        System.out.println(exception.getMessage());
         return exception.getMessage();
     }
 
