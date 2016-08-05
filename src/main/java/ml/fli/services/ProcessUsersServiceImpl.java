@@ -37,6 +37,10 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         String searchingUserId = request.getUserId();
         String searchingSex = request.getSex();
 
+        if (searchingUserId.startsWith("id", 0)) {
+            searchingUserId = searchingUserId.substring(2);
+        }
+
         Set<User> usersList= resultVkApi(searchingUserId,searchingSex);
 
         Instances dataSet = UsersConverter.usersToInstances(usersList);

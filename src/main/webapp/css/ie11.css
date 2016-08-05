@@ -1,0 +1,32 @@
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+	.search-result,
+	.statistics__item,
+	.statistics,
+	.search,
+	.content,
+	.header,
+	body {
+		-ms-display: flex;
+	}
+
+	.search {
+		width: 565px;
+	}
+
+	body,
+	.content {
+		-ms-flex-direction: column;
+	}
+
+	.slogan {
+		line-height: 135px;
+	}
+
+	.search-result {
+		-ms-flex-wrap: wrap;
+	}
+
+	.statistics {
+		width: 850px;
+	}
+}

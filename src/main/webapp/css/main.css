@@ -7,12 +7,11 @@
 html,
 body {
 	min-height: 100vh;
-	height: 100vh;
 }
 
 body {
 	display: flex;
-	flex-direction:column;
+	flex-direction: column;
 	font-family: "muller";
 	font-size: 18px;
 	color: #fff;
@@ -26,8 +25,8 @@ button:focus {
 }
 
 ::-webkit-input-placeholder {color: #fff;}
-::-moz-placeholder          {color: #fff;}/* Firefox 19+ */
-:-moz-placeholder           {color: #fff;}/* Firefox 18- */
+::-moz-placeholder          {color: #fff;}
+:-moz-placeholder           {color: #fff;}
 :-ms-input-placeholder      {color: #fff;}
 
 /* header */
@@ -45,6 +44,7 @@ button:focus {
 }
 
 .slogan {
+	display: inline-block;
 	margin: auto auto auto 20px;
 	color: #e63946;
 	text-transform: uppercase;
@@ -59,7 +59,7 @@ button:focus {
 /* act 1 */
 
 .content {
-	height: 100%;
+	min-height: 80vh;
 	display: flex;
 	flex-direction: column;
 }
@@ -86,12 +86,13 @@ button:focus {
 
 .block-info_massege {
 	width: 330px;
-	margin: 20px auto 0;
+	margin: 20px auto 70px;
 }
 
 .block-info_warning {
 	background: #e63946;
 }
+
 
 .block-info_warning:before {
 	border-color: transparent transparent transparent #e63946;
@@ -100,7 +101,10 @@ button:focus {
 /* search */
 
 .search {
+	width: 560px;
 	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
 	margin: auto;
 }
 
@@ -121,6 +125,7 @@ button:focus {
 }
 
 .button {
+	display: inline-block;
 	line-height: 60px;
 	height: 60px;
 	cursor: pointer;
@@ -171,18 +176,21 @@ button:focus {
 /* statistics */
 
 .statistics {
-	margin: 0 auto 50px auto;
+	margin: 50px auto;
 	display: flex;
+	flex-wrap: wrap;
 	list-style: none;
 	color: #83c9f4;
 }
 
 .statistics__item {
 	display: flex;
+	flex-wrap: wrap;
 	margin-right: 50px;
 }
 
 .statistics__info {
+	white-space: nowrap;
 	padding: 27px 25px;
 	text-align: right;
 	font-weight: normal;
@@ -200,15 +208,16 @@ button:focus {
 /* act 2 */
 
 .get-result {
-	margin: auto;
+	display: flex;
 }
 
 .get-result__button {
+	margin: 0 auto 50px;
 	background: #e63946;
 	box-shadow: 0 0 30px rgba(230, 57, 70, .7);
 	transform: scale(1);
 	transition: transform .4s, box-shadow .4s;
-
+	visibility: hidden;
 }
 
 .get-result__button:hover {
@@ -235,63 +244,106 @@ button:focus {
 }
 
 .user {
+	margin: 20px;
+
 	width: 300px;
 	height: 300px;
-	margin: 20px;
-	position: relative;
+
 	overflow: hidden;
 	border-radius: 3px;
+
+	position: relative;
+
+	background: #e3b5a4;
 }
 
-.user__inner-ava {
-	position: absolute;
-	z-index: 1;
+.user__ava {
+	transition: opacity .3s;
 }
 
-.user__desc {
-	width: 100%;
-	height: 100%;
-	bottom: 0;
-	left: 0;
-	position: absolute;
-	z-index: 2;
-	color: #fff;
-	background: rgba(131, 201, 244, 0);
-	transition: background .7s;
-}
-
-.user__title {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	padding: 15px;
-	background: rgba(131, 201, 244, .7);
-	transition: font-size .7s;
-}
-
-.user__massege {
-	width: 100%;
-	opacity: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%,-50%);
-	font-size: 22px;
+.user__link-block {
+	color: #f5e9e2;
 	text-align: center;
-	font-style: italic;
-	transition: opacity .7s;
 }
 
-.user__desc:hover { background: rgba(131, 201, 244, .7); }
-.user__desc:hover .user__massege { opacity: 1; }
-.user__desc:hover .user__title {
-	font-size: 32px;
+.user__wrapper-ava {
+	z-index: 1;
+	position: absolute;
 }
 
-#button{
-	visibility: hidden;
+.user__info {
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	z-index: 2;
+}
+
+
+.user__info-inner:before {
+	content: "";
+	display: block;
+
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 150px 0 0 300px;
+	transition: top .3s, transform .3s;
+	border-color: transparent transparent transparent rgba(119, 51, 68, .7);
+}
+
+.user__name,
+.user__hint {
+	background: rgba(119, 51, 68, .7);
+}
+
+.user__name {
+	font-weight: normal;
+}
+
+.user__info-inner {
+	transform: translateY(20px);
+	transition: all .4s;
+}
+
+.user__info-inner:before {
+	transform: scaleY(0);
+	transform-origin: bottom;
+	transition: all .4s;
+}
+
+.user:hover .user__info-inner:before {
+	transform: scaleY(1);
+}
+
+.user:hover .user__info-inner {
+	transform: translateY(0);
+}
+
+.user:hover .user__ava {
+	opacity: .3;
 }
 
 /* /act 3 */
 
 /* /content */
+
+
+.rotate {
+	transform: rotateX(0);
+	transform-origin: top;
+	transition: transform 1.5s;
+}
+.rotate.ng-hide {
+	transform: rotateX(-90deg);
+}
+
+.opacity {
+	/*transform: translateX(0);*/
+	opacity: 1;
+	transition: all 1.5s;
+}
+
+.opacity.ng-hide {
+	/*transform: translateX(100%);*/
+	opacity: 0;
+}

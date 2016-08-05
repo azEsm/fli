@@ -1,0 +1,67 @@
+html,
+body {
+	min-height: auto;
+	height: auto;
+}
+
+.header {
+	width: 380px;
+}
+
+.logo,
+.slogan {
+	display: inline-block;
+}
+
+.logo {
+	float: left;
+}
+
+.slogan {
+	line-height: 135px;
+}
+
+.search {
+	width: 570px;
+	margin: 100px auto;
+}
+
+
+.statistics__info,
+.statistics__number,
+.statistics__item {
+	display: inline-block;
+}
+
+.statistics {
+	display: table;
+	width: 100%;
+}
+
+.statistics__item {
+	display: table-cell;
+	height: 100px;
+	width: 50%;
+}
+
+.statistics__item:nth-child(1) {
+	float: right;
+}
+
+.get-result {
+	width: 300px;
+	margin: 0 auto;
+}
+
+.game {
+	display: block;
+	margin: 0 auto;
+}
+
+.user {
+	float: left;
+}
+
+.search-result {
+	margin: 20px auto;
+}

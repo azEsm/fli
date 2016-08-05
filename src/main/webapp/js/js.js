@@ -1,5 +1,5 @@
 var stompClient = null;
-//var users;
+var users;
 var fliApp = angular.module("fliApp", []);
 /*var users=[
           		{
@@ -25,16 +25,20 @@ function connect() {
 
     var socket = new SockJS('/process');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.connect({}, function() {
 
-        stompClient.subscribe('/queue/userList', function(FrontendResponse){
+        stompClient.subscribe('/data/userList',function(FrontendResponse){
+
             showUsers(JSON.parse(FrontendResponse.body));
         });
-        stompClient.subscribe("/queue/errors", function(msg) {
-            alert(msg.body);
+
+        stompClient.subscribe('/data/errors',function(handleException){
+
+                    alert(handleException.body);
         });
-        stompClient.subscribe("/queue/errorUserExist", function(msg) {
-            alert(msg.body);
+        stompClient.subscribe('/data/errorUserExist',function(errorUserExist){
+
+                    alert(errorUserExist.body);
         });
     });
 }
@@ -52,7 +56,7 @@ function send() {
 
 function reg(str){
 
-    str=str.replace(/.+id/,"")
+    str=str.replace(/.+vk.com\//,"");
     return str;
 }
 
@@ -81,7 +85,7 @@ users = users.result;
 
     for (i=0; i<users.length; i++){
 
-        var block = document.createElement('div');
+        /*var block = document.createElement('div');
         block.className = "user";
 
         obj.appendChild(block);
@@ -108,12 +112,66 @@ users = users.result;
         var nameSpan = document.createElement('span');
         nameSpan.className = "user__title";
         nameSpan.innerHTML = users[i].name;
-        link.appendChild(nameSpan);
+*/
 
         /*var span = document.createElement('span');
         span.className = "user__massege";
         span.innerHTML = message;
         link.appendChild(span);*/
+
+
+        var block = document.createElement('article');
+        block.className = "opacity user";
+
+        obj.appendChild(block);
+
+        var link = document.createElement('a');
+        link.href = users[i].accountUrl;
+        link.className = "user__link-block";
+        link.target = "_blank";
+
+        block.appendChild(link);
+
+        var avaDiv = document.createElement('div');
+        avaDiv.className = "user__wrapper-ava";
+
+        link.appendChild(avaDiv);
+
+        var image = document.createElement('img');
+        image.src = users[i].photoUrl;
+        image.width = "300";
+        image.height = "300";
+        image.className = "user__ava";
+
+        avaDiv.appendChild(image);
+
+        var infoDiv = document.createElement('div');
+        infoDiv.className = "user__info";
+
+        link.appendChild(avaDiv);
+
+        var userInfo = document.createElement('div');
+        userInfo.className = "user__info";
+
+        link.appendChild(userInfo);
+
+        var infoInnerDiv = document.createElement('div');
+        infoInnerDiv.className = "user__info-inner";
+
+        userInfo.appendChild(infoInnerDiv);
+
+        var infoH2 = document.createElement('h2');
+        infoH2.className = "user__name";
+        infoH2.innerHTML = users[i].name;
+
+        infoInnerDiv.appendChild(infoH2);
+
+        var infoP = document.createElement('p');
+        infoP.className = "user__hint";
+        infoP.innerHTML = "Посетить страницу в VK";
+
+        infoInnerDiv.appendChild(infoP);
+
 
 
 
@@ -124,6 +182,8 @@ users = users.result;
     }
 
 }
+
+
 
 /*fliApp.controller("showUsers",function ($scope, getUsers){
 
@@ -161,4 +221,60 @@ function disconnect() {
     stompClient.disconnect();
     //setConnected(false);
     console.log("Disconnected");
+}
+
+function checkUrl(){
+    url = document.getElementById("str");
+
+    if(/[А-Яа-яёЁ]/.test(url.value)){
+        alert("не корректные данные");
+        url.style.border.style = "solid";
+        url.style.border.color = "red";
+        return false;
+    }
+    if(/^$/.test(url.value)){
+        alert("заполниет поле ввода");
+        url.style.border.style = "solid";
+        url.style.border.color = "red";
+        return false;
+    }
+
+    return true;
+
+
+}
+
+function bodyOnLoad(){
+
+    connect();
+
+    firstMainDisplay('block');
+    secondMainDisplay('none');
+    thirdMainDisplay('none');
+
+}
+
+function firstMainOnClick(){
+
+    if(checkUrl()){
+        send();
+        firstMainDisplay('none');
+        secondMainDisplay('block');
+    }
+
+}
+function secondMainOnClick(){
+    secondMainDisplay('none');
+    thirdMainDisplay('block');
+
+}
+
+function firstMainDisplay(visibility){
+    document.getElementById('firstMain').style.display = visibility;
+}
+function secondMainDisplay(visibility){
+    document.getElementById('secondMain').style.display = visibility;
+}
+function thirdMainDisplay(visibility){
+    document.getElementById('thirdMain').style.display = visibility;
 }

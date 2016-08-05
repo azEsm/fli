@@ -1,3 +1,121 @@
+/* header */
+
+/* logo */
+
+@media (max-width: 375px) {
+	.logo {
+		margin-left: 20px;
+	}
+}
+
+/* /logo */
+
+/* /header */
+
+
+/* content */
+
+@media (max-width: 375px) {
+	.content {
+		width: 100%;
+	}
+}
+
+/* /content */
+
+
+/* act 1 */
+
+/* search */
+
+@media (max-width: 580px) {
+	.search {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	.serch__wrapper {
+		margin: 20px;
+	}
+	.search__input {
+		box-sizing: border-box;
+		width: 70%;
+	}
+	.search__button {
+		box-sizing: border-box;
+		width: 25%;
+		margin-left: 2%;
+		padding: 0;
+		text-align: center;
+	}
+	.search__button:after {
+		display: none;
+	}
+	.filter {
+		box-sizing: border-box;
+		width: auto;
+		margin: 20px 20px 0 20px;
+	}
+}
+
+/* /search */
+
+/* message */
+
+@media (max-width: 375px) {
+	.block-info_massege {
+		box-sizing: border-box;
+		width: auto;
+		margin: 20px 20px 50px;
+	}
+}
+
+/* /message */
+
+/* statistics */
+
+@media (max-width: 830px) {
+	.statistics {
+		flex-direction: column;
+	}
+
+	.statistics__info {
+		margin: 0 auto;
+	}
+}
+
+@media (max-width: 510px) {
+	.statistics__item {
+		flex-direction: column;
+		margin: 0 auto;
+	}
+
+	.statistics__number {
+		margin: 0 auto;
+	}
+}
+
+/* /statistics */
+
+/* /act 1 */
+
+/* act 2 */
+
+/* game */
+
+@media (max-width: 800px) {
+	.game {
+		width: 100%;
+		height: 75%;
+	}
+}
+
+/* /game */
+
+/* /act 2 */
+
+/* act 3 */
+
 @media (max-width: 1710px) {
 	.search-result {
 		width: 1360px;
@@ -21,3 +139,17 @@
 		width: 340px;
 	}
 }
+
+@media (max-width: 340px) {
+	.search-result {
+		width: 320px;
+	}
+
+	.user {
+		width: 250px;
+		height: 250px;
+		margin: 10px auto;
+	}
+}
+
+/* /act 3 */

@@ -2,17 +2,24 @@
 <html ng-app="fliApp">
 <head>
 	<meta charset="UTF-8">
-	<title>FLi</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>FLi - зайдии и найди!</title>
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/font.css">
+	<link rel="stylesheet" href="css/ie11.css">
+	<link rel="stylesheet" href="css/media.css">
 	<script src="js/sockjs-0.3.4.js"></script>
 	<script src="js/stomp.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
 	<script src="js/js.js" ></script>
-	<link rel="stylesheet" href="css/media.css">
+	<!--[if IE 9]>
+		<link rel="stylesheet" href="css/ie9.css">
+	<![endif]-->
+
+
 
 </head>
-<body onload="connect()">
+<body onload="bodyOnLoad()">
 
 	<header class="header">
 		<img width="135" height="135" src="images/logo.png" alt="Fli" class="logo">
@@ -20,24 +27,22 @@
 	</header>
 
 <!-- ACT 1 -->
-	<main class="content" ng-hide="checked" >
-		<div></div>
+	<main class="content" id="firstMain">
 		<p class="block-info block-info_massege">FLi - сервис помогающий любому человек зарегистрированному в vk найти друзй по интересам.</p>
 		<div class="search">
-		<form action="#">
-			<input placeholder="Вставь ссылку на страйницу в VK!" type="text" class="search__input" id="str">
-			<button class="button search__button" ng-model="checked"
-					ng-init="checked=false" ng-click="checked=true" onclick="send()">найти!</button>
+			<div class="serch__wrapper">
+				<input placeholder="Вставь ссылку на страйницу в VK!" required type="text" class="search__input" id="str">
+				<a class="button search__button" onclick="firstMainOnClick()" >найти!</a>
+			</div>
 			<div class="block-info filter">
 				<h2 class="filter__title">Фильтр: </h2>
 				<span>Пол: </span>
-				<select name="" id="sex">
+				<select id="sex">
 					<option value="0">без разницы</option>
-					<option value="1">мужской</option>
+					<option value="1">муржской</option>
 					<option value="2">женский</option>
 				</select>
 			</div>
-		</form>
 		</div>
 		<ul class="statistics">
 			<li class="statistics__item">
@@ -50,37 +55,33 @@
 			</li>
 		</ul>
 	</main>
-<!-- /ACT 1 -->
 
-<!-- ACT 2 -->
-	<main ng-show="checked"  >
-		<div   ng-hide="off" class="content">
-			<p class="block-info block-info_massege block-info_warning">
-				Поиск друзей займёт у нас некоторое время. Пока вы ждёте можите поиграть в игру ниже.
-			</p>
-			<form class="get-result" action="">
-				<button id="button" class="button get-result__button"  ng-model="off" ng-init="off=false"  ng-click="off=true"  >проверить результат!</button>
-			</form>
-			<canvas class="game"></canvas>
-		</div>
-	</main>
-	<!-- /ACT 2 -->
-
-
-	<!-- ACT 3 -->
-	<main class="content"  ng-show="off" >
-		<p class="block-info block-info_massege">
-			Мы нашли для вас друзей!
+	<main id="secondMain">
+	<div class="content">
+		<p class="rotate block-info block-info_massege block-info_warning">
+			Поиск друзей займёт у нас некоторое время. Пока вы ждёте можите поиграть в игру ниже.
 		</p>
-		<div class="search-result" id="usersDiv">
-
-
+		<div  class="opacity get-result">
+			<button id="button" class="button get-result__button" onclick="secondMainOnClick()">проверить результат!</button>
 		</div>
+		<canvas class="opacity game"></canvas>
+	</div>
 	</main>
-	<!-- /ACT 3 -->
+<!-- /ACT 2 -->
 
 
+<!-- ACT 3 -->
+<main class="content opacity" id="thirdMain" >
+	<p class="block-info block-info_massege">
+		Мы нашли для вас друзей!
+	</p>
+	<div class="search-result" id="usersDiv">
 
+	</div>
+</main>
+<!-- /ACT 3 -->
+
+<!--[if IE 9]><script src="js/placeholder.js"></script><![endif]-->
 
 </body>
 </html>

@@ -560,7 +560,7 @@ public class SimpleTest {
     @Test
     public void testTransferController() {
         FrontendRequest request = new FrontendRequest();
-        request.setUserId("7272824");
+        request.setUserId("id7272824");
         request.setSex("0");
         try {
             FrontendResponse users = transferController.get(request);
