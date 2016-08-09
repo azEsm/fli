@@ -12,6 +12,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.setUserDestinationPrefix("/user");
         config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/fli");
     }

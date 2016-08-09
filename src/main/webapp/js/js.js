@@ -25,18 +25,18 @@ function connect() {
 
     var socket = new SockJS('/process');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function() {
+    stompClient.connect('guest', 'guest', function() {
 
-        stompClient.subscribe('/queue/userList',function(FrontendResponse){
+        stompClient.subscribe('/user/queue/userList',function(FrontendResponse){
 
             showUsers(JSON.parse(FrontendResponse.body));
         });
 
-        stompClient.subscribe('/queue/errors',function(handleException){
+        stompClient.subscribe('/user/queue/errors',function(handleException){
 
                     alert(handleException.body);
         });
-        stompClient.subscribe('/queue/errorUserExist',function(errorUserExist){
+        stompClient.subscribe('user/queue/errorUserExist',function(errorUserExist){
 
                     alert(errorUserExist.body);
         });

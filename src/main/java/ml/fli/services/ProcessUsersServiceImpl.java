@@ -14,6 +14,7 @@ import weka.core.Instances;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -39,7 +40,7 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         String searchingUserId = request.getUserId();
         String searchingSex = request.getSex();
 
-        if (searchingUserId.startsWith("id", 0)) {
+        if (searchingUserId.startsWith("id", 0) && isNumber(searchingUserId.substring(2))) {
             searchingUserId = searchingUserId.substring(2);
         }
 
@@ -52,6 +53,14 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         try {
             Set<Instance> resultCluster = cluster.FindCluster(dataSet, this.userId);
             result = FrontendResponseConverter.instanceToResponse(resultCluster);
+            Set<FrontendResponse.Raw> userList = result.getResult();
+            Iterator<FrontendResponse.Raw> iterator = userList.iterator();
+            while (iterator.hasNext()) {
+                FrontendResponse.Raw user = iterator.next();
+                if (user.getAccountUrl().equals("https://vk.com/id" + this.userId)) {
+                    iterator.remove();
+                }
+            }
         } catch (Exception e) {
             throw Errors.asUnchecked(e);
         }
@@ -140,6 +149,14 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         finally {
             return usersList;
         }
+    }
+
+    private boolean isNumber(String str) {
+        if (str == null || str.isEmpty()) return false;
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isDigit(str.charAt(i))) return false;
+        }
+        return true;
     }
 
     @RequestMapping(path="/errorUserExist", method=POST)
