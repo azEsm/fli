@@ -3,6 +3,7 @@ package ml.fli;
 
 import ml.fli.controllers.UsersController;
 import ml.fli.db.models.User;
+import ml.fli.db.repositories.UsersRepository;
 import ml.fli.models.FrontendRequest;
 import ml.fli.models.FrontendResponse;
 import ml.fli.models.Response;
@@ -52,6 +53,9 @@ public class SimpleTest {
     private UsersController usersController;
 
     @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
     VkService vkApi;
 
     @Test
@@ -59,6 +63,39 @@ public class SimpleTest {
         Clusterer clusterer = new SimpleKMeans();
         assertNotNull(clusterer);
         assertNotNull(restTemplate);
+    }
+
+    @Test
+    public void dbTest() {
+        String name = "Иван";
+        String surname = "Иванов";
+        String city = "Пенза";
+
+        User user = new User(
+                1L,
+                name,
+                surname,
+                "1",
+                null,
+                city
+        );
+
+        Set<String> audios = new HashSet<>();
+
+        audios.add("asdasda - sdg");
+
+        user.setAudio(audios);
+        usersRepository.save(user);
+       // System.out.println( usersRepository.findAll());
+        User userFromDb = usersRepository.findOne(1L);
+
+        assertNotNull(userFromDb);
+        assertEquals(name, userFromDb.getFirst_name());
+        assertEquals(surname, userFromDb.getLast_name());
+        assertEquals(city, userFromDb.getCity());
+
+        assertNotNull(userFromDb.getAudio());
+        assertEquals(audios.size(), userFromDb.getAudio().size());
     }
 
     @Test

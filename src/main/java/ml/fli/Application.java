@@ -2,6 +2,7 @@ package ml.fli;
 
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.ScheduledExecutorService;
 
 @SpringBootApplication
+@EnableAutoConfiguration
 public class Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);

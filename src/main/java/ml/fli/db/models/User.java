@@ -1,14 +1,25 @@
 package ml.fli.db.models;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 public class User {
+    public User() {
+        //для JPA
+    }
+
+    public User(long id, String first_name, String last_name, String sex, String bdate, String city) {
+        this.id = id;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.sex = sex;
+        this.bdate = bdate;
+        this.city = city;
+    }
+
     @Id
+    @Column(name = "id")
     private long id;
 
     private String first_name;
@@ -37,12 +48,20 @@ public class User {
 
     private String music;
 
-    @ElementCollection
-    @CollectionTable(name = "audios")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "audios",
+            joinColumns=@JoinColumn(name = "id")
+    )
+    @Column(name = "audio")
     private Set<String> audio;
 
-    @ElementCollection
-    @CollectionTable(name = "groups")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "groups",
+            joinColumns=@JoinColumn(name = "id")
+    )
+    @Column(name = "group")
     private Set<String> groups;
 
     public long getId() {
@@ -178,18 +197,5 @@ public class User {
             + "; home_town = " + city + "]"
             + "bdate = " + bdate;
     }*/
-
-    public User() {
-
-    }
-
-    public User(long id, String first_name, String last_name, String sex, String bdate, String city) {
-        this.id = id;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.sex = sex;
-        this.bdate = bdate;
-        this.city = city;
-    }
 
 }
