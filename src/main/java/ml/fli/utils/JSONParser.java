@@ -239,6 +239,10 @@ public class JSONParser {
         return listGroups;
     }
 
+    /*    public Set<User> parseGroupUsers(String groupUsers)
+        {
+
+        }*/
     public boolean presenseOfErrors(String request) {
         JsonElement element = parser.parse(request);
 
@@ -262,6 +266,16 @@ public class JSONParser {
         return false;
     }
 
+    public int errorCode(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            return code;
+        } else return -1;
+    }
+
     public boolean errorManyRequest(String request) {
         JsonElement element = parser.parse(request);
 
@@ -282,6 +296,32 @@ public class JSONParser {
         if (error != null) {
             Integer code = error.get("error_code").getAsInt();
             if (code.equals(14)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean errorAccesToGroupDenided(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            if (code.equals(125)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean errorUserDeleted(String request) {
+        JsonElement element = parser.parse(request);
+
+        JsonObject error = element.getAsJsonObject().getAsJsonObject("error");
+        if (error != null) {
+            Integer code = error.get("error_code").getAsInt();
+            if (code.equals(18)) {
                 return true;
             }
         }

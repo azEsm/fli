@@ -78,7 +78,7 @@ public class User {
     }
 
     public String getCity() {
-        return city;
+        return (city != null) ? city : "";
     }
 
     public void setCity(String city) {

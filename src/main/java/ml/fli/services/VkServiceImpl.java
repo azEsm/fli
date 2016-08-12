@@ -86,6 +86,15 @@ public final class VkServiceImpl implements VkService {
         return invokeApi("execute.GetAudioAndGroup", Params.create().add("user", listId));
     }
 
+    //полученее списка пользователей группы
+    public String getGroupMembers(long groupId, int count) {
+        return invokeApi("groups.getMembers", Params.create()
+                .add("count", String.valueOf(count))
+                .add("group_id", String.valueOf(groupId))
+                .add("offset", "100")
+                .add("fields", "sex,bdate,city,about,activities,books,games,interests,movies,music,photo_200"));
+    }
+
     private String invokeApi(String method, Params params) {
         final String parameters = (params == null) ? "" : params.build();
         String reqUrl = API_REQUEST

@@ -46,4 +46,6 @@ public interface VkService {
      * @return
      */
     String executeAudioAndGroup(String listId);
+
+    String getGroupMembers(long groupId, int count);
 }

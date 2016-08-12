@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +26,7 @@ import weka.clusterers.SimpleKMeans;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
+import weka.core.converters.ConverterUtils;
 import weka.core.converters.JSONLoader;
 import weka.core.converters.Loader;
 import weka.filters.Filter;
@@ -238,12 +240,12 @@ public class SimpleTest {
             }
         }*/
 
-        VkApiParams param = VkApiParams.create().add("count","50");
+        VkApiParams param = VkApiParams.create().add("count", "50");
         String resultUsersList = vkApi.getUsersList(param);
 
         Set<User> resultVkApi = parser.parseUsers(resultUsersList);
 
-        for (User user: resultVkApi) {
+        for (User user : resultVkApi) {
             String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
             //System.out.println(audioVkApi);
 
@@ -283,14 +285,14 @@ public class SimpleTest {
         Klusterer cluster = new Klusterer();
         Set<Instance> result = cluster.FindCluster(dataSet, Integer.parseInt(searchingUserId));
 
-        for (Instance inst: result)
+        for (Instance inst : result)
             System.out.println(inst);
     }
 
     @Test
     public void tfIdfTest() throws Exception {
         try (
-            InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
+                InputStream input = this.getClass().getClassLoader().getResourceAsStream("test.csv")
         ) {
             //JSONLoader loader = new JSONLoader();
             //loader.setSource(json);
@@ -341,6 +343,7 @@ public class SimpleTest {
         for (Instance instance : dataFiltered) {
             System.out.println(instance.toString());
             System.out.println("Cluster: " + clusterer.clusterInstance(instance));
+            System.out.println("Cluster: " + clusterer.logDensityPerClusterForInstance(instance));
         }
 
 //        ClusterEvaluation evaluation = new ClusterEvaluation();
@@ -446,7 +449,7 @@ public class SimpleTest {
     public void vkApiGetUsersListTest() throws Exception {
         Random rand = new Random();
         int count = rand.nextInt(12) + 3;
-        VkApiParams param = VkApiParams.create().add("count",String.valueOf(count));
+        VkApiParams param = VkApiParams.create().add("count", String.valueOf(count));
         String resultUsersList = vkApi.getUsersList(param);
         logger.info("\nUsersList: {}\n", resultUsersList);
     }
@@ -464,7 +467,7 @@ public class SimpleTest {
         JSONParser parser = new JSONParser();
         Set<User> usersList = parser.parseExecuteUsers(resultUsersList);
 
-        assertEquals(12,usersList.size());
+        assertEquals(12, usersList.size());
         for (User user : usersList) {
             assertNotNull(user.getId());
             assertNotNull(user.getFirst_name());
@@ -489,7 +492,7 @@ public class SimpleTest {
             JSONParser parser = new JSONParser();
             Set<User> usersList = parser.parseUsers(jsonString);
 
-            assertEquals(10,usersList.size());
+            assertEquals(10, usersList.size());
         }
     }
 
@@ -499,7 +502,7 @@ public class SimpleTest {
             int data = sourceFile.read();
             char content;
             String jsonString = "";
-            while(data != -1) {
+            while (data != -1) {
                 content = (char) data;
                 jsonString += content;
                 data = sourceFile.read();
@@ -560,7 +563,7 @@ public class SimpleTest {
     @Test
     public void testTransferController() {
         FrontendRequest request = new FrontendRequest();
-        request.setUserId("id7272824");
+        request.setUserId("21722617");
         request.setSex("0");
         try {
             FrontendResponse users = transferController.get(request);
@@ -580,6 +583,244 @@ public class SimpleTest {
         assertEquals(users.size(), instances.size());
     }
 
+    @Test
+    public void newVKAPIcluster() throws Exception {
+
+        System.out.println("K, we started!");
+        // 11. user г > группы аудио интересы и проч
+        String searchingUserId = "21722617";
+        JSONParser parser = new JSONParser();
+        Set<User> usersList = new HashSet<>();
+        //region get data for searched user: interests, audio, groups
+        //get vk data
+        System.out.println("Get searched user");
+        String resultOneUser = vkApi.getUser(searchingUserId);
+        User oneUser = parser.parseUser(resultOneUser);
+        Thread.sleep(333);
+
+        System.out.println("Get his audio");
+        String audioString = vkApi.getUserAudios(Integer.parseInt(searchingUserId), 20);
+        Set<String> audioCollection = parser.parseAudio(audioString);
+        oneUser.setAudio(audioCollection);
+        Thread.sleep(333);
+
+        System.out.println("Get his groups");
+        String groupString = vkApi.getUserGroups(Integer.parseInt(searchingUserId), 20);
+        Set<String> groups = parser.parseVKGroups(groupString);
+        oneUser.setGroups(groups);
+        usersList.add(oneUser);
+        Thread.sleep(334);
+        System.out.println("searched user: done!");
+        //endregion
+
+        //region Get potential friends from user's groups and process'em
+        System.out.println("start searching his new friends");
+        for (String group : oneUser.getGroups()) {
+            System.out.println("get group members");
+            String result = vkApi.getGroupMembers(Long.valueOf(group), 10);
+            Thread.sleep(333);
+            //get all group users
+            if (!parser.presenseOfErrors(result) && !parser.errorAccesToGroupDenided(result)) {
+                // process'em like before
+                System.out.println("process memders from some group");
+                Set<User> tmpUsers = parser.parseUsers(result);
+                for (User user : tmpUsers) {
+                    boolean shouldIAdd = true;
+                    String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+
+                    if (parser.presenseOfErrors(audioVkApi)) {
+                        int errCode = parser.errorCode(audioVkApi);
+                        if (parser.errorManyRequest(audioVkApi)) {
+                            System.out.println("too many request, sleep for 0.3s");
+                            Thread.sleep(333);
+                            audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+                        }
+                        if (parser.errorCaptchaNeeded(audioVkApi)) {
+                            System.out.println("capcha. 45s sleep");
+                            Thread.sleep(45000);
+                            audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+                        }
+                        if (parser.errorAudioClose(audioVkApi)) {
+                            Set<String> usersAudio = new HashSet<>();
+                            user.setAudio(usersAudio);
+                        }
+                        if (errCode == 125 || errCode == 15) {
+                            System.out.println("bad user");
+                            shouldIAdd = false;
+                            break;
+                        }
+                    } else {
+                        Set<String> usersAudio = parser.parseAudio(audioVkApi);
+                        user.setAudio(usersAudio);
+                    }
+
+
+                    //get and parse group
+                    Thread.sleep(333);
+                    String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+
+                    while (parser.presenseOfErrors(groupVkApi)) {
+                        int errCode = parser.errorCode(audioVkApi);
+                        if (parser.errorManyRequest(groupVkApi)) {
+                            System.out.println("too many request, sleep for 0.3s");
+                            Thread.sleep(700);
+                            groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+                        }
+                        if (parser.errorCaptchaNeeded(groupVkApi)) {
+                            System.out.println("capcha. 45s sleep");
+                            Thread.sleep(45000);
+                            groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+                        }
+                        // heve no idea why it's here 0_o
+                        if (parser.errorUserDeleted(groupVkApi)) {
+                            System.out.println("user was banned or deleted");
+                            shouldIAdd = false;
+                            break;
+                        }
+                        if (errCode == 15) {
+                            System.out.println("user deactivated");
+                            shouldIAdd = false;
+                            break;
+                        }
+                    }
+                    Set<String> userGroups = parser.parseVKGroups(groupVkApi);
+                    user.setGroups(userGroups);
+
+                    if (shouldIAdd) {
+                        usersList.add(user);
+                        Thread.sleep(334);
+                        System.out.println("added another guy " + usersList.size());
+                    }
+                }
+            } else
+                //goto next group
+                break;
+
+        }
+        System.out.println("done with searchin potential friends");
+        //endregion
+
+        //region preprocessing : to instances, filtering, preparing clusterer
+        System.out.println("preprocessing is started!");
+        Instances dataSet = UsersConverter.usersToInstances(usersList);
+
+        StringToWordVector filter = new StringToWordVector();
+        filter.setInputFormat(dataSet);
+        filter.setIDFTransform(true);
+        filter.setTFTransform(true);
+        Instances dataFiltered = Filter.useFilter(dataSet, filter);
+
+        //save raw and filtered data to *.arff for goods :)
+
+        String path = new ClassPathResource("src\\main\\resources\\").getPath();
+        StringBuffer sbuffer = new StringBuffer(path);
+        ConverterUtils.DataSink.write(sbuffer.append("data_nonFiltered.arff").toString(), dataSet);
+        ConverterUtils.DataSink.write(sbuffer.append("data_Filtered.arff").toString(), dataFiltered);
+
+        EM cluster = new EM();
+        int clusterNumber = (int) Math.pow((double) (dataFiltered.size() / 2), 0.5);
+        cluster.setNumClusters(clusterNumber);
+        System.out.println("done with preprocess");
+        //endregion
+
+        //region clustering routine ehh :(
+        System.out.println("start clustering");
+        cluster.buildClusterer(dataFiltered);
+        System.out.println("end clustring \n start to process output");
+        int searchedClustererIndex = 0;
+
+        //ищем кластер, где находится искомый объект
+        for (Instance user : dataFiltered) {
+            if ((int) user.value(0) == Integer.valueOf(searchingUserId)) {
+                searchedClustererIndex = cluster.clusterInstance(user);
+            }
+        }
+
+        //собираем все объекты из искомого кластера ( над кластером tf-idf)
+        Set<Integer> findedUsers = new HashSet<Integer>();
+        for (Instance instance : dataFiltered) {
+            if (cluster.clusterInstance(instance) == searchedClustererIndex) {
+                findedUsers.add((int) instance.value(0));
+            }
+        }
+
+        //ищем соответствующие записи в ИСХОДНЫХ ДАННЫХ
+        Set<Instance> thisData = new HashSet<>();
+        for (Instance inst : dataSet) {
+            for (Integer id : findedUsers) {
+                if ((((int) inst.value(0)) == id)
+                        && ((int) inst.value(0)) != Integer.valueOf(searchingUserId)) {
+                    thisData.add(inst);
+                }
+            }
+        }
+
+        //endregion
+
+        //region result output
+        for (Instance user : thisData) {
+            System.out.println(user);
+        }
+        //endregion
+    }
+
+    @Test
+    public void anotherClusteringTest() throws Exception {
+        //region dataload
+        String path = new ClassPathResource("src\\main\\resources\\").getPath();
+
+        Instances dataSet = ConverterUtils.DataSource.read(path + "data_nonFiltered.arff");
+        Instances dataFiltered = ConverterUtils.DataSource.read(path + "data_Filtered.arff");
+        //endregion
+        String searchingUserId = "21722617";
+        EM cluster = new EM();
+        int clusterNumber = (int) Math.pow((double) (dataFiltered.size() / 2), 0.5);
+        cluster.setNumClusters(clusterNumber);
+        cluster.setMaxIterations(50);
+
+        //region clustering routine ehh :(
+        System.out.println("start clustering");
+        cluster.buildClusterer(dataFiltered);
+        System.out.println("end clustring \n start to process output");
+        int searchedClustererIndex = 0;
+
+        //ищем кластер, где находится искомый объект
+        for (Instance user : dataFiltered) {
+            if ((int) user.value(0) == Integer.valueOf(searchingUserId)) {
+                searchedClustererIndex = cluster.clusterInstance(user);
+            }
+        }
+
+        //собираем все объекты из искомого кластера ( над кластером tf-idf)
+        Set<Integer> findedUsers = new HashSet<Integer>();
+        for (Instance instance : dataFiltered) {
+            if (cluster.clusterInstance(instance) == searchedClustererIndex) {
+                findedUsers.add((int) instance.value(0));
+            }
+        }
+
+        //ищем соответствующие записи в ИСХОДНЫХ ДАННЫХ
+        Set<Instance> thisData = new HashSet<>();
+        for (Instance inst : dataSet) {
+            for (Integer id : findedUsers) {
+                if ((((int) inst.value(0)) == id)
+                        && ((int) inst.value(0)) != Integer.valueOf(searchingUserId)) {
+                    thisData.add(inst);
+                }
+            }
+        }
+
+        //endregion
+
+        //region result output
+        for (Instance user : thisData) {
+            System.out.println(user);
+            double[] dist = cluster.distributionForInstance(user);
+        }
+        //endregion
+
+
+    }
     private Set<User> buildUsers() {
         User user = new User();
         user.setId(123);
