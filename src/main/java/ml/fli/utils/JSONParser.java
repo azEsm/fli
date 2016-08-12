@@ -74,8 +74,8 @@ public class JSONParser {
             if (user.getAsJsonObject("city") != null) {
                 oneUser.setCity(user.getAsJsonObject("city").get("id").getAsString());
             }
-            if (user.get("photo_400_orig") != null) {
-                oneUser.setPhoto_400_orig(user.get("photo_400_orig").getAsString());
+            if (user.get("photo_200") != null) {
+                oneUser.setPhoto_400_orig(user.get("photo_200").getAsString());
             }
             if (user.get("about") != null) {
                 oneUser.setAbout(user.get("about").getAsString());

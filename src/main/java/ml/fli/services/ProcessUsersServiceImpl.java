@@ -6,9 +6,7 @@ import ml.fli.models.FrontendResponse;
 import ml.fli.models.VkApiParams;
 import ml.fli.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -17,22 +15,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Service
 public class ProcessUsersServiceImpl implements ProcessUsersService{
 
     @Autowired
     private VkService vkApi;
 
-    private final SimpMessagingTemplate messagingTemplate;
-
     private long userId;
-
-    @Autowired
-    public ProcessUsersServiceImpl(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
 
     @Override
     public FrontendResponse process(@Nonnull FrontendRequest request) {
@@ -54,11 +43,18 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
             Set<Instance> resultCluster = cluster.FindCluster(dataSet, this.userId);
             result = FrontendResponseConverter.instanceToResponse(resultCluster);
             Set<FrontendResponse.Raw> userList = result.getResult();
-            Iterator<FrontendResponse.Raw> iterator = userList.iterator();
-            while (iterator.hasNext()) {
-                FrontendResponse.Raw user = iterator.next();
-                if (user.getAccountUrl().equals("https://vk.com/id" + this.userId)) {
-                    iterator.remove();
+            if (userList.size() == 1) {
+                for (FrontendResponse.Raw user : userList) {
+                    user.setPhotoUrl("http://301-1.ru/gen-mems/img_mems/4a4c2a53661ede617bd7437b4e728cbb.jpg");
+                }
+            }
+            if (userList.size() > 1) {
+                Iterator<FrontendResponse.Raw> iterator = userList.iterator();
+                while (iterator.hasNext()) {
+                    FrontendResponse.Raw user = iterator.next();
+                    if (user.getAccountUrl().equals("https://vk.com/id" + this.userId)) {
+                        iterator.remove();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -74,73 +70,82 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
         Set<User> usersList = new HashSet<>();
 
         //get one user
-        String resultOneUser = vkApi.getUser(UserId);
-
         try {
-            if (parser.errorUserExist(resultOneUser)) {
-                errorUserExist();
-            }
-            else {
-                //parse one user
-                User searchingUser = parser.parseUser(resultOneUser);
-                this.userId = searchingUser.getId();
-
-                String audioString = vkApi.getUserAudios(searchingUser.getId(), 20);
-                Set<String> audioCollection = parser.parseAudio(audioString);
-                searchingUser.setAudio(audioCollection);
-
-                String groupString = vkApi.getUserGroups(searchingUser.getId(), 20);
-                Set<String> groups = parser.parseVKGroups(groupString);
-                searchingUser.setGroups(groups);
-                usersList.add(searchingUser);
-
-                //get users list
-                VkApiParams param = VkApiParams.create().add("count","25").add("sex", Sex);
-                String resultUsersList = vkApi.getUsersList(param);
-
-                //parse users list
-                Set<User> resultVkApi = parser.parseUsers(resultUsersList);
-
-                for (User user: resultVkApi) {
-                    //get and parse audio
-                    String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
-
-                    while (parser.presenseOfErrors(audioVkApi)) {
-                        if (parser.errorManyRequest(audioVkApi)) {
-                            Thread.sleep(700);
-                            audioVkApi = vkApi.getUserAudios(user.getId(), 20);
-                        }
-                        if (parser.errorCaptchaNeeded(audioVkApi)) {
-                            Thread.sleep(45000);
-                            audioVkApi = vkApi.getUserAudios(user.getId(), 20);
-                        }
-                        if (!parser.errorAudioClose(audioVkApi)) {
-                            Set<String> usersAudio = parser.parseAudio(audioVkApi);
-                            user.setAudio(usersAudio);
-                        }
-                        else {
-                            break;
-                        }
-                    }
-
-                    //get and parse group
-                    String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
-
-                    while (parser.presenseOfErrors(groupVkApi)) {
-                        if (parser.errorManyRequest(groupVkApi)) {
-                            Thread.sleep(700);
-                            groupVkApi = vkApi.getUserGroups(user.getId(), 20);
-                        }
-                        if (parser.errorCaptchaNeeded(groupVkApi)) {
-                            Thread.sleep(45000);
-                            groupVkApi = vkApi.getUserGroups(user.getId(), 20);
-                        }
-                    }
-                    Set<String> userGroups = parser.parseVKGroups(groupVkApi);
-                    user.setGroups(userGroups);
-
-                    usersList.add(user);
+            String resultOneUser = vkApi.getUser(UserId);
+            while (parser.presenseOfErrors(resultOneUser)) {
+                if (parser.errorManyRequest(resultOneUser)) {
+                    Thread.sleep(700);
+                    resultOneUser = vkApi.getUser(UserId);
                 }
+                if (parser.errorCaptchaNeeded(resultOneUser)) {
+                    Thread.sleep(45000);
+                    resultOneUser = vkApi.getUser(UserId);
+                }
+            }
+            //parse one user
+            User searchingUser = parser.parseUser(resultOneUser);
+            this.userId = searchingUser.getId();
+            Thread.sleep(350);
+
+            String audioString = vkApi.getUserAudios(searchingUser.getId(), 20);
+            Set<String> audioCollection = parser.parseAudio(audioString);
+            searchingUser.setAudio(audioCollection);
+            Thread.sleep(350);
+
+            String groupString = vkApi.getUserGroups(searchingUser.getId(), 20);
+            Set<String> groups = parser.parseVKGroups(groupString);
+            searchingUser.setGroups(groups);
+            usersList.add(searchingUser);
+            Thread.sleep(350);
+
+            //get users list
+            VkApiParams param = VkApiParams.create().add("count", "25").add("sex", Sex);
+            String resultUsersList = vkApi.getUsersList(param);
+            Thread.sleep(350);
+
+            //parse users list
+            Set<User> resultVkApi = parser.parseUsers(resultUsersList);
+
+            for (User user : resultVkApi) {
+                //get and parse audio
+                String audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+
+                while (parser.presenseOfErrors(audioVkApi)) {
+                    if (parser.errorManyRequest(audioVkApi)) {
+                        Thread.sleep(700);
+                        audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+                    }
+                    if (parser.errorCaptchaNeeded(audioVkApi)) {
+                        Thread.sleep(45000);
+                        audioVkApi = vkApi.getUserAudios(user.getId(), 20);
+                    }
+                    if (!parser.errorAudioClose(audioVkApi)) {
+                        Set<String> usersAudio = parser.parseAudio(audioVkApi);
+                        user.setAudio(usersAudio);
+                    } else {
+                        break;
+                    }
+                }
+                Thread.sleep(350);
+
+                //get and parse group
+                String groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+
+                while (parser.presenseOfErrors(groupVkApi)) {
+                    if (parser.errorManyRequest(groupVkApi)) {
+                        Thread.sleep(700);
+                        groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+                    }
+                    if (parser.errorCaptchaNeeded(groupVkApi)) {
+                        Thread.sleep(45000);
+                        groupVkApi = vkApi.getUserGroups(user.getId(), 20);
+                    }
+                }
+                Set<String> userGroups = parser.parseVKGroups(groupVkApi);
+                user.setGroups(userGroups);
+
+                usersList.add(user);
+                Thread.sleep(350);
             }
         }
         catch (NullPointerException npe) {
@@ -157,12 +162,6 @@ public class ProcessUsersServiceImpl implements ProcessUsersService{
             if (!Character.isDigit(str.charAt(i))) return false;
         }
         return true;
-    }
-
-    @RequestMapping(path="/errorUserExist", method=POST)
-    public void errorUserExist() {
-        String text = "Пользователя с таким id не существует";
-        this.messagingTemplate.convertAndSend("/queue/errorUserExist", text);
     }
 
 }

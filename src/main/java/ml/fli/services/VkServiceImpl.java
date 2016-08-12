@@ -58,7 +58,7 @@ public final class VkServiceImpl implements VkService {
             parameter.add("age_from", String.valueOf(Integer.valueOf(age) - 5));
             parameter.add("age_to", String.valueOf(Integer.valueOf(age) + 5));
         }
-        parameter.add("fields", "sex,bdate,city,photo_400_orig,about,activities,books,games,interests,movies,music");
+        parameter.add("fields", "sex,bdate,city,photo_200,about,activities,books,games,interests,movies,music");
         return invokeApi("users.search", parameter);
     }
 
